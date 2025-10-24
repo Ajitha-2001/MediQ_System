@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- Use th:text for the title to avoid inline-mode requirements -->
+    <title th:text="'Invoice #'+${bill.billId}+' • HMS'">Invoice • HMS</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-purple: #8B5FBF;
+            --light-purple: #F5F0FF;
+            --dark-purple: #6D28D9;
+            --accent-purple: #A78BFA;
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --medium-gray: #e2e8f0;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --success: #10b981;
+            --warning: #f50b26;
+            --error: #ef4444;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: linear-gradient(135deg, #F9F7FF 0%, #F5F0FF 50%, #F0EBFF 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .invoice-container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .invoice-box {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid var(--medium-gray);
+            position: relative;
+        }
+        .invoice-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+        }
+        .invoice-box:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .invoice-header {
+            background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+            color: white;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .invoice-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            animation: float 20s infinite linear;
+            z-index: 1;
+        }
+        @keyframes float { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(-100px) translateY(-100px); } }
+        .invoice-header > div { position: relative; z-index: 2; }
+
+        .invoice-body {
+            padding: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-purple);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-purple), transparent);
+            margin-left: 0.5rem;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .status-paid {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .status-unpaid {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .status-partial {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        /* Table Styles */
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .invoice-table thead {
+            background: var(--light-purple);
+        }
+        .invoice-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dark);
+            border-bottom: 2px solid var(--medium-gray);
+        }
+        .invoice-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        .invoice-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .invoice-table tfoot {
+            background: var(--light-purple);
+            font-weight: 600;
+        }
+        .invoice-table tfoot td {
+            border-top: 2px solid var(--medium-gray);
+            border-bottom: none;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn:hover::before { left: 100%; }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 95, 191, 0.3);
+        }
+        .btn.secondary {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--medium-gray);
+        }
+        .btn.secondary:hover {
+            background: var(--medium-gray);
+            color: var(--text-dark);
+            border-color: var(--text-light);
+        }
+
+        .invoice-footer {
+            background: var(--light-purple);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--medium-gray);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .invoice-body { padding: 1.5rem; }
+            .invoice-header { padding: 1.5rem; }
+            .action-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="invoice-container">
+    <div class="invoice-box" data-aos="fade-up">
+        <!-- Header -->
+        <div class="invoice-header">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h2 class="mb-2"><i class="bi bi-hospital-fill me-2"></i>MediQ Hospital</h2>
+                    <p class="mb-0 opacity-75">123 Main Street, Colombo | +94 77 123 4567</p>
+                </div>
+                <div class="text-end">
+                    <h1 class="mb-2">INVOICE</h1>
+                    <p class="mb-1"><strong>ID:</strong> <span th:text="${bill.billId}">—</span></p>
+                    <p class="mb-0"><strong>Date:</strong> <span th:text="${bill.dateIssued}">—</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="invoice-body">
+            <!-- Patient & Billing Info -->
+            <div class="row mb-4">
+                <div class="col-md-6" data-aos="fade-right">
+                    <h4 class="section-title">
+                        <i class="bi bi-person-circle"></i>
+                        Patient Details
+                    </h4>
+                    <div class="ps-3">
+                        <p class="mb-2"><strong class="fs-5" th:text="${bill.patientFullName ?: '—'}">—</strong></p>
+                        <p class="mb-0 text-muted">Patient ID: <span th:text="${bill.patientId ?: '-'}">-</span></p>
+                    </div>
+                </div>
+                <div class="col-md-6" data-aos="fade-left">
+                    <h4 class="section-title">
+                        <i class="bi bi-credit-card"></i>
+                        Billing Information
+                    </h4>
+                    <div class="ps-3">
+                        <p class="mb-2">
+                            <strong>Status:</strong>
+                            <span th:if="${bill.paymentStatus == 'Paid'}" class="status-badge status-paid">
+                                <i class="bi bi-check-circle"></i>
+                                <span th:text="${bill.paymentStatus}">Paid</span>
+                            </span>
+                            <span th:if="${bill.paymentStatus == 'Unpaid'}" class="status-badge status-unpaid">
+                                <i class="bi bi-x-circle"></i>
+                                <span th:text="${bill.paymentStatus}">Unpaid</span>
+                            </span>
+                            <span th:if="${bill.paymentStatus == 'Partial'}" class="status-badge status-partial">
+                                <i class="bi bi-clock"></i>
+                                <span th:text="${bill.paymentStatus}">Partial</span>
+                            </span>
+                        </p>
+                        <p class="mb-0" th:if="${bill.dueDate}">
+                            <strong>Due Date:</strong> <span th:text="${bill.dueDate}">—</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billed Items -->
+            <div data-aos="fade-up">
+                <h4 class="section-title">
+                    <i class="bi bi-receipt"></i>
+                    Billed Items
+                </h4>
+                <table class="invoice-table">
+                    <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th class="text-end">Amount (Rs.)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td th:text="${bill.items ?: 'Medical Services'}">Medical Services</td>
+                        <td class="text-end" th:text="${bill.amount}">0.00</td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td><strong>Total Amount</strong></td>
+                        <td class="text-end"><strong th:text="${bill.amount}">0.00</strong></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Notes (if any) -->
+            <div th:if="${bill.items}" class="mt-4" data-aos="fade-up">
+                <h4 class="section-title">
+                    <i class="bi bi-sticky"></i>
+                    Service Details
+                </h4>
+                <div class="ps-3 p-3 bg-light rounded">
+                    <p class="mb-0" th:text="${bill.items}">Service description</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="invoice-footer">
+            <div class="mb-4">
+                <p class="mb-3 fs-5">Thank you for choosing MediQ Hospital 💜</p>
+                <p class="text-muted mb-0">This is a computer-generated invoice. No signature required.</p>
+            </div>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a th:href="@{|/billing/${bill.billId}/invoice/pdf|}" class="btn">
+                    <i class="bi bi-download me-2"></i> Download PDF
+                </a>
+                <a th:href="@{/billing}" class="btn secondary">
+                    <i class="bi bi-arrow-left me-2"></i> Back to Bills
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+    // Initialize AOS animations
+    AOS.init({
+        duration: 800,
+        once: true,
+        offset: 50
+    });
+</script>
+</body>
+</html>

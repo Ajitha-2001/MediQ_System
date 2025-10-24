@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout (title, content)">
+  <th:block th:replace="fragments/_head :: head(${title})"></th:block>
+  <body>
+    <th:block th:replace="fragments/_navbar :: navbar"></th:block>
+    <main class="container page-pad">
+      <section th:insert="${content}"></section>
+    </main>
+  </body>
+</html>

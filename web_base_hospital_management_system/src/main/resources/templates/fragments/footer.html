@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<th:block th:fragment="footer">
+    <footer class="footer-modern mt-auto">
+        <div class="container py-4 text-center">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-md-start mb-2 mb-md-0" data-aos="fade-right">
+                    <span class="text-muted small">
+                        <i class="bi bi-heart-pulse text-primary me-1"></i>
+                        Providing Quality Healthcare
+                    </span>
+                </div>
+                <div class="col-md-6 text-md-end" data-aos="fade-left">
+                    <span class="text-muted small">
+                        © <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2025</span>
+                        Hospital Management System
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+</th:block>
+</body>
+</html>

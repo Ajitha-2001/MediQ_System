@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Create Account | HMS</title>
+
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- AOS Animation -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-green: #10b981;
+            --light-green: #d1fae5;
+            --dark-green: #047857;
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            min-height: 100vh;
+        }
+
+        .auth-wrap {
+            min-height: calc(100vh - 56px);
+            display: flex;
+            align-items: center;
+            padding: 1rem 0 2rem;
+        }
+
+        @media (max-width: 991.98px) {
+            .auth-wrap {
+                min-height: auto;
+                align-items: stretch;
+            }
+        }
+
+        .card-modern {
+            background: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .card-modern:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header-modern {
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green)) !important;
+            border: none;
+            padding: 1.5rem;
+        }
+
+        .form-control-modern, .form-select-modern {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: var(--transition);
+            background: var(--white);
+        }
+
+        .form-control-modern:focus, .form-select-modern:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid #6b7280;
+            color: #6b7280;
+            background: transparent;
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-outline-secondary:hover {
+            background: #6b7280;
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .alert-modern {
+            border: none;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            box-shadow: var(--shadow);
+        }
+
+        .hover-lift {
+            transition: var(--transition);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .input-group-patientP .input-group-text {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid #e5e7eb;
+            border-right: none;
+            color: var(--primary-green);
+        }
+
+        .input-group-patientP .form-control-modern {
+            border-left: none;
+        }
+    </style>
+</head>
+<body>
+
+<main class="auth-wrap">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <div class="card card-modern animate-fade-in-up" data-aos="zoom-in" data-aos-duration="800">
+                    <div class="card-header-modern text-white">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-person-plus display-6"></i>
+                            <div>
+                                <h4 class="mb-0 fw-bold">Create Your Account</h4>
+                                <small class="opacity-75">Join our healthcare network</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-4 p-lg-5">
+
+                        <!-- Top-level error from controller -->
+                        <div th:if="${error}" class="alert alert-danger alert-modern animate-fade-in-up mb-4">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <span th:text="${error}">Registration error</span>
+                        </div>
+
+                        <!-- Registration Form -->
+                        <form th:action="@{/register}" th:object="${registration}" method="post" class="needs-validation" novalidate>
+                            <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                            <div class="row g-4">
+                                <!-- Personal Information -->
+                                <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
+                                    <label class="form-label fw-medium text-dark">First Name</label>
+                                    <input class="form-control form-control-modern" th:field="*{firstName}" placeholder="Jane" required>
+                                    <div class="invalid-feedback">First name is required.</div>
+                                    <div th:if="${#fields.hasErrors('firstName')}" class="text-danger small mt-1" th:errors="*{firstName}"></div>
+                                </div>
+
+                                <div class="col-md-6" data-aos="fade-up" data-aos-delay="150">
+                                    <label class="form-label fw-medium text-dark">Last Name</label>
+                                    <input class="form-control form-control-modern" th:field="*{lastName}" placeholder="Doe" required>
+                                    <div class="invalid-feedback">Last name is required.</div>
+                                    <div th:if="${#fields.hasErrors('lastName')}" class="text-danger small mt-1" th:errors="*{lastName}"></div>
+                                </div>
+
+                                <!-- Contact Information -->
+                                <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+                                    <label class="form-label fw-medium text-dark">Email Address</label>
+                                    <div class="input-group input-group-patientP">
+                                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                        <input type="email" class="form-control form-control-modern" th:field="*{email}" placeholder="jane@example.com" required>
+                                    </div>
+                                    <div class="invalid-feedback">Valid email is required.</div>
+                                    <div th:if="${#fields.hasErrors('email')}" class="text-danger small mt-1" th:errors="*{email}"></div>
+                                </div>
+
+                                <div class="col-md-6" data-aos="fade-up" data-aos-delay="250">
+                                    <label class="form-label fw-medium text-dark">Phone Number</label>
+                                    <div class="input-group input-group-patientP">
+                                        <span class="input-group-text"><i class="bi bi-phone"></i></span>
+                                        <input class="form-control form-control-modern" th:field="*{phoneNumber}" placeholder="+94 77 123 4567" required
+                                               pattern="^\+?[\d\s-]+$">
+                                    </div>
+                                    <div class="invalid-feedback">Valid phone number is required.</div>
+                                    <div th:if="${#fields.hasErrors('phoneNumber')}" class="text-danger small mt-1" th:errors="*{phoneNumber}"></div>
+                                </div>
+
+                                <div class="col-md-6" data-aos="fade-up" data-aos-delay="275">
+                                    <label class="form-label fw-medium text-dark">Contact Number (Optional)</label>
+                                    <input class="form-control form-control-modern" th:field="*{contactNumber}" placeholder="Alternative contact number">
+                                    <div th:if="${#fields.hasErrors('contactNumber')}" class="text-danger small mt-1" th:errors="*{contactNumber}"></div>
+                                </div>
+
+                                <!-- Account Information -->
+                                <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
+                                    <label class="form-label fw-medium text-dark">Username</label>
+                                    <div class="input-group input-group-patientP">
+                                        <span class="input-group-text">@</span>
+                                        <input class="form-control form-control-modern" th:field="*{username}" placeholder="jane_doe" required>
+                                    </div>
+                                    <div class="invalid-feedback">Username is required.</div>
+                                    <div th:if="${#fields.hasErrors('username')}" class="text-danger small mt-1" th:errors="*{username}"></div>
+                                </div>
+
+                                <div class="col-md-6" data-aos="fade-up" data-aos-delay="350">
+                                    <label class="form-label fw-medium text-dark">Password</label>
+                                    <div class="input-group input-group-patientP">
+                                        <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                        <input id="password" type="password" class="form-control form-control-modern" th:field="*{password}" placeholder="••••••••" required minlength="6">
+                                        <button class="btn btn-outline-secondary hover-lift" type="button" onclick="togglePassword()">
+                                            <i class="bi bi-eye" id="passwordIcon"></i>
+                                        </button>
+                                    </div>
+                                    <div class="invalid-feedback">Password is required.</div>
+                                    <div th:if="${#fields.hasErrors('password')}" class="text-danger small mt-1" th:errors="*{password}"></div>
+                                </div>
+
+                                <div class="col-md-6" data-aos="fade-up" data-aos-delay="375">
+                                    <label class="form-label fw-medium text-dark">Confirm Password</label>
+                                    <div class="input-group input-group-patientP">
+                                        <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                                        <input id="confirmPassword" type="password" class="form-control form-control-modern" th:field="*{confirmPassword}" placeholder="Re-enter password" required>
+                                    </div>
+                                    <div class="invalid-feedback">Please confirm your password.</div>
+                                    <div th:if="${#fields.hasErrors('confirmPassword')}" class="text-danger small mt-1" th:errors="*{confirmPassword}"></div>
+                                </div>
+
+                                <!-- Submit Buttons -->
+                                <div class="col-12 mt-2" data-aos="fade-up" data-aos-delay="500">
+                                    <div class="d-flex gap-3 justify-content-end">
+                                        <a class="btn btn-outline-secondary hover-lift" th:href="@{/login}">
+                                            <i class="bi bi-arrow-left me-2"></i> Back to Login
+                                        </a>
+                                        <button class="btn btn-success hover-lift" type="submit" id="submitBtn">
+                                            <i class="bi bi-check2-circle me-2"></i> Create Account
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Validation summary (server-side) -->
+                                <div class="col-12 mt-3" th:if="${#fields.hasAnyErrors()}">
+                                    <div class="alert alert-danger alert-modern mb-0">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>Please review the highlighted fields.
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+    // Initialize AOS animations
+    AOS.init({ duration: 800, once: true, offset: 50 });
+
+    // Form validation (client-side)
+    (function () {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                const pwd = document.getElementById('password');
+                const cpw = document.getElementById('confirmPassword');
+                if (pwd && cpw && pwd.value !== cpw.value) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    cpw.setCustomValidity('Passwords do not match');
+                    cpw.reportValidity();
+                } else {
+                    cpw && cpw.setCustomValidity('');
+                }
+
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    const submitBtn = document.getElementById('submitBtn');
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="bi bi-arrow-repeat spinner me-2"></i> Creating Account...';
+                        submitBtn.disabled = true;
+                    }
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+
+    // Toggle password visibility
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const passwordIcon = document.getElementById('passwordIcon');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            passwordIcon.className = 'bi bi-eye-slash';
+        } else {
+            passwordInput.type = 'password';
+            passwordIcon.className = 'bi bi-eye';
+        }
+    }
+</script>
+
+<style>
+    .spinner { animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+</style>
+</body>
+</html>

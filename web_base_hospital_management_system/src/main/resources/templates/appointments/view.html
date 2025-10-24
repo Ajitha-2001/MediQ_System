@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Appointment Details • MediQ</title>
+
+  <!-- Bootstrap 5 & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-orange: #FF6B35;
+      --light-orange: #FFF5F0;
+      --dark-orange: #E55A2B;
+      --accent-orange: #FF8C5A;
+      --white: #ffffff;
+      --light-gray: #f8fafc;
+      --medium-gray: #e2e8f0;
+      --text-dark: #1e293b;
+      --text-light: #64748b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+      --border-radius: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: linear-gradient(135deg, #FFF9F5 0%, #FFF5F0 50%, #FFF0E8 100%);
+      min-height: 100vh;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-dark);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header Animation */
+    .navbar {
+      position: relative;
+      overflow: hidden;
+    }
+    .navbar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+      animation: float 20s infinite linear;
+      z-index: 1;
+    }
+    @keyframes float { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(-100px) translateY(-100px); } }
+    .navbar > .container { position: relative; z-index: 2; }
+    .navbar-brand { font-weight: 700; }
+    .nav-link { border-radius: 8px; margin: 0 2px; transition: var(--transition); }
+    .nav-link:hover { background: rgba(255, 255, 255, 0.1); }
+
+    /* Main Content */
+    .main-content { flex: 1; padding: 2rem 1.5rem; }
+    .container { max-width: 1000px; margin: 0 auto; }
+
+    .page-header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; }
+    .page-title { font-size: 2rem; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 0.75rem; }
+    .page-title::before { content: ''; width: 4px; height: 28px; background: var(--primary-orange); border-radius: 2px; }
+    .page-subtitle { color: var(--text-light); margin-top: 0.5rem; }
+
+    .card { background: var(--white); border-radius: var(--border-radius); box-shadow: var(--shadow); padding: 2.5rem; transition: var(--transition); border: 1px solid var(--medium-gray); position: relative; overflow: hidden; }
+    .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(135deg, var(--primary-orange), var(--accent-orange)); }
+    .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+
+    .details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+    .detail-item { display: flex; flex-direction: column; gap: 0.5rem; }
+    .detail-label { font-size: 0.85rem; color: var(--text-light); font-weight: 500; display: flex; align-items: center; gap: 0.5rem; }
+    .detail-label i { color: var(--primary-orange); }
+    .detail-value { font-size: 1.1rem; font-weight: 600; color: var(--text-dark); }
+
+    .status-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+    .status-booked { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+    .status-cancelled { background: rgba(239, 68, 68, 0.1); color: var(--error); }
+    .status-completed { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+    .status-pending { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+
+    .action-buttons { display: flex; gap: 1rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--medium-gray); }
+    .btn-flex { flex: 1; text-align: center; justify-content: center; }
+
+    /* Buttons */
+    .btn {
+      background: linear-gradient(135deg, var(--primary-orange), var(--accent-orange));
+      color: white; border: none; border-radius: 10px; padding: 0.75rem 1.5rem; font-weight: 600;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition);
+      cursor: pointer; font-size: 0.95rem; position: relative; overflow: hidden;
+    }
+    .btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s; }
+    .btn:hover::before { left: 100%; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3); }
+    .btn.secondary { background: transparent; color: var(--text-light); border: 2px solid var(--medium-gray); }
+    .btn.secondary:hover { background: var(--medium-gray); color: var(--text-dark); border-color: var(--text-light); }
+    .btn.danger { background: transparent; color: var(--error); border: 2px solid var(--error); }
+    .btn.danger:hover { background: var(--error); color: white; }
+
+    /* Animations */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in-up { animation: fadeInUp 0.6s ease-out; }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .details-grid { grid-template-columns: 1fr; }
+      .action-buttons { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/index}">
+      <i class="bi bi-hospital-fill"></i>
+      <span>MediQ</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="topNav" class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" th:href="@{/admin/dashboard}">Admin Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/patients}">Patient Management</a></li>
+        <li class="nav-item"><a class="nav-link active" th:href="@{/appointments}">Appointments</a></li>
+      </ul>
+
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-white-50 small">
+          <i class="bi bi-person-circle me-1"></i>
+          <span th:text="${#authentication?.name} ?: 'Guest'">Guest</span>
+        </span>
+
+        <!-- Logout must be POST -->
+        <form th:if="${#authentication != null and #authentication.principal != null and #authentication.principal != 'anonymousUser'}"
+              th:action="@{/logout}" method="post" class="m-0">
+          <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+          <button class="btn btn-outline-light btn-sm" type="submit">
+            <i class="bi bi-box-arrow-right me-1"></i> Logout
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Breadcrumb -->
+<nav class="container mt-3" aria-label="breadcrumb" data-aos="fade-down">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" class="text-decoration-none">Admin Dashboard</a></li>
+    <li class="breadcrumb-item"><a th:href="@{/appointments}" class="text-decoration-none">Appointments</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Appointment Details</li>
+  </ol>
+</nav>
+
+<main class="main-content">
+  <div class="container">
+    <div class="page-header" data-aos="fade-up">
+      <div>
+        <h1 class="page-title">
+          <i class="bi bi-calendar-event"></i>
+          Appointment Details
+        </h1>
+        <p class="page-subtitle">Complete information about the scheduled appointment</p>
+      </div>
+      <div data-aos="fade-left" data-aos-delay="200">
+        <a href="/appointments" class="btn secondary">
+          <i class="bi bi-arrow-left"></i>
+          Back to List
+        </a>
+      </div>
+    </div>
+
+    <div class="card animate-fade-in-up">
+      <div class="details-grid">
+        <div class="detail-item" data-aos="fade-right" data-aos-delay="100">
+          <div class="detail-label">
+            <i class="bi bi-person"></i>
+            Patient
+          </div>
+          <div class="detail-value" th:text="${appt.patient.firstName + ' ' + appt.patient.lastName}">Patient Name</div>
+        </div>
+
+        <div class="detail-item" data-aos="fade-left" data-aos-delay="100">
+          <div class="detail-label">
+            <i class="bi bi-person-badge"></i>
+            Doctor
+          </div>
+          <div class="detail-value" th:text="${'Dr. ' + appt.doctor.name + ' · ' + appt.doctor.specialization}">Doctor Information</div>
+        </div>
+
+        <div class="detail-item" data-aos="fade-right" data-aos-delay="200">
+          <div class="detail-label">
+            <i class="bi bi-calendar"></i>
+            Date
+          </div>
+          <div class="detail-value" th:text="${#temporals.format(appt.startTime, 'EEEE, MMMM dd, yyyy')}">Date</div>
+        </div>
+
+        <div class="detail-item" data-aos="fade-left" data-aos-delay="200">
+          <div class="detail-label">
+            <i class="bi bi-clock"></i>
+            Time
+          </div>
+          <div class="detail-value" th:text="${#temporals.format(appt.startTime, 'hh:mm a') + ' - ' + #temporals.format(appt.endTime, 'hh:mm a')}">Time</div>
+        </div>
+
+        <div class="detail-item" data-aos="fade-right" data-aos-delay="300">
+          <div class="detail-label">
+            <i class="bi bi-info-circle"></i>
+            Status
+          </div>
+          <div>
+            <span class="status-badge"
+                  th:classappend="${'status-' + #strings.toLowerCase(appt.status.name())}">
+              <i class="bi"
+                 th:classappend="${appt.status.name() == 'BOOKED' ? 'bi-calendar-check' : (appt.status.name() == 'COMPLETED' ? 'bi-check-circle' : (appt.status.name() == 'CANCELLED' ? 'bi-x-circle' : 'bi-clock'))}"></i>
+              <span th:text="${appt.status}">Status</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="detail-item" data-aos="fade-left" data-aos-delay="300">
+          <div class="detail-label">
+            <i class="bi bi-broadcast"></i>
+            Channel
+          </div>
+          <div class="detail-value" th:text="${appt.channel} ?: 'Not specified'">Channel</div>
+        </div>
+
+        <div class="detail-item" data-aos="fade-up" data-aos-delay="400" style="grid-column: 1 / -1;">
+          <div class="detail-label">
+            <i class="bi bi-sticky"></i>
+            Notes
+          </div>
+          <div class="detail-value" th:if="${appt.notes}" th:text="${appt.notes}">Notes content</div>
+          <div class="detail-value" th:unless="${appt.notes}" style="color: var(--text-light); font-style: italic;">No notes provided</div>
+        </div>
+      </div>
+
+      <div class="action-buttons" data-aos="fade-up" data-aos-delay="500">
+        <form th:action="@{/appointments/{id}/cancel(id=${appt.externalId})}" method="post"
+              onsubmit="return confirm('Are you sure you want to cancel this appointment? This action cannot be undone.')"
+              class="btn-flex">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+          <button class="btn danger btn-flex" type="submit">
+            <i class="bi bi-x-circle"></i>
+            Cancel Appointment
+          </button>
+        </form>
+        <a th:href="@{/appointments/{id}/reschedule(id=${appt.externalId})}" class="btn btn-flex">
+          <i class="bi bi-calendar-event"></i>
+          Reschedule
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="mt-5">
+  <div class="container py-4 text-center text-muted small">
+    © <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2025</span> MediQ
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  // Initialize AOS animations
+  AOS.init({
+    duration: 800,
+    once: true,
+    offset: 50
+  });
+</script>
+</body>
+</html>

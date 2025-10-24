@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediQ - Advanced Hospital Management System</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --color-bg: #000000;
+      --color-bg-secondary: #12151c;
+      --color-fg: #e6edf3;
+      --color-fg-muted: #8b949e;
+      --color-border: #2a2f37;
+      --color-accent: #58a6ff;
+      --color-success: #3fb950;
+      --color-danger: #f85149;
+      --color-medical-blue: #1976D2;
+      --color-medical-green: #388E3C;
+      --color-medical-teal: #26A69A;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+      --glow-blue: #79c0ff;
+      --glow-teal: #26A69A;
+      --glow-green: #66BB6A;
+      --header-bg: rgba(13, 17, 23, 0.95);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--color-bg);
+      color: var(--color-fg);
+      position: relative;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; }
+
+    #tsparticles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .background-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(320deg, #e0f7fa, #b2ebf2, #80deea, #4dd0e1, #26c6da, #00bcd4, #00acc1, #0097a7, #00838f, #006064);
+      background-size: 1000% 1000%;
+      animation: gradient-animation 20s ease infinite;
+      filter: blur(150px);
+      opacity: 0.3;
+    }
+
+    @keyframes gradient-animation {
+      0% {
+        background-position: 0% 50%;
+        opacity: 0.2;
+      }
+      25% {
+        opacity: 0.4;
+      }
+      50% {
+        background-position: 100% 50%;
+        opacity: 0.3;
+      }
+      75% {
+        opacity: 0.5;
+      }
+      100% {
+        background-position: 0% 50%;
+        opacity: 0.2;
+      }
+    }
+
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Enhanced Header Styles */
+    .main-header {
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: var(--header-bg);
+      backdrop-filter: blur(15px);
+      z-index: 100;
+      border-bottom: 1px solid rgba(42, 47, 55, 0.5);
+      user-select: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-header.scrolled {
+      padding: 0.8rem 2rem;
+      background: rgba(13, 17, 23, 0.98);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--color-fg);
+      text-decoration: none;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.3s ease;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--color-medical-blue), var(--color-medical-teal));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .logo-icon i {
+      font-size: 1.5rem;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .logo-main {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--color-medical-blue), var(--color-medical-teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo-tagline {
+      font-size: 0.7rem;
+      color: var(--color-fg-muted);
+      letter-spacing: 1px;
+    }
+
+    .main-nav {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .main-nav a {
+      color: var(--color-fg-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+      user-select: none;
+      position: relative;
+      padding: 0.5rem 0;
+    }
+
+    .main-nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--color-medical-blue), var(--color-medical-teal));
+      transition: width 0.3s ease;
+    }
+
+    .main-nav a:hover {
+      color: var(--color-fg);
+    }
+
+    .main-nav a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      margin-left: 1.5rem;
+      padding: 0.5rem 1.5rem;
+      background: linear-gradient(135deg, var(--color-medical-blue), var(--color-medical-teal));
+      border-radius: 50px;
+      color: white;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+    }
+
+    .nav-cta::after {
+      display: none;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--color-fg);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 8rem 0 6rem;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      color: var(--color-fg);
+      max-width: 900px;
+      user-select: none;
+    }
+
+    .hero-title .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: char-reveal 0.5s forwards;
+      user-select: none;
+    }
+
+    @keyframes char-reveal {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--color-fg-muted);
+      max-width: 650px;
+      line-height: 1.6;
+      user-select: none;
+    }
+
+    .cta-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      user-select: none;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 28px;
+      background: linear-gradient(45deg, var(--color-medical-blue), var(--color-medical-teal));
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-size: 1rem;
+      min-width: 180px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      user-select: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 18px var(--color-medical-blue);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--color-border);
+      color: var(--color-fg);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(22, 27, 34, 0.8);
+      border-color: var(--color-fg-muted);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .section {
+      padding: 6rem 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -1px;
+      user-select: none;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      font-size: 1.1rem;
+      color: var(--color-fg-muted);
+      margin-bottom: 4rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      user-select: none;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s, transform 0.8s;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .interactive-card {
+      background: rgba(22, 27, 34, 0.8);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .interactive-card::before {
+      content: "";
+      position: absolute;
+      left: var(--mouse-x, -1000px);
+      top: var(--mouse-y, -1000px);
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(121, 192, 255, 0.25) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: left 0.2s, top 0.2s;
+      opacity: 0;
+    }
+
+    .interactive-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    .interactive-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .icon-blue {
+      background: linear-gradient(135deg, var(--color-medical-blue), #42A5F5);
+    }
+
+    .icon-green {
+      background: linear-gradient(135deg, var(--color-medical-green), #66BB6A);
+    }
+
+    .icon-teal {
+      background: linear-gradient(135deg, var(--color-medical-teal), #4DB6AC);
+    }
+
+    .interactive-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .interactive-card p {
+      color: var(--color-fg-muted);
+      line-height: 1.6;
+    }
+
+    .stats-section {
+      background: linear-gradient(135deg, var(--color-medical-blue), var(--color-medical-teal));
+      padding: 4rem 0;
+      color: white;
+      border-radius: 20px;
+      margin: 5rem 0;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-text {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .testimonial-text {
+      color: var(--color-fg-muted);
+      line-height: 1.6;
+      font-style: italic;
+      border-left: 3px solid var(--color-accent);
+      padding-left: 1rem;
+      flex-grow: 1;
+      margin-bottom: 1.5rem;
+      user-select: none;
+    }
+
+    .testimonial-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      color: var(--color-fg-muted);
+      font-size: 0.9rem;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .testimonial-author img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid var(--color-border);
+    }
+
+    .rating-stars {
+      color: #f1c40f;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--color-success);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .faq-item summary {
+      padding: 1.5rem 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: color 0.3s;
+    }
+
+    .faq-item summary:hover {
+      color: var(--color-accent);
+    }
+
+    .faq-item summary::-webkit-details-marker { display: none; }
+
+    .faq-item summary::after {
+      content: '+';
+      font-size: 1.5rem;
+      font-weight: 300;
+      transition: transform 0.3s;
+    }
+
+    .faq-item[open] summary::after {
+      transform: rotate(45deg);
+    }
+
+    .faq-content {
+      padding: 0 0 1.5rem 0;
+      color: var(--color-fg-muted);
+      line-height: 1.7;
+      overflow: hidden;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--color-fg-muted);
+      font-size: 0.95rem;
+      margin-top: 1rem;
+    }
+
+    .main-footer {
+      padding: 4rem 2rem;
+      text-align: center;
+      color: var(--color-fg-muted);
+    }
+
+    .footer-logo {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--color-fg);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .footer-links {
+      margin: 1.5rem 0;
+    }
+
+    .footer-links a {
+      color: var(--color-fg-muted);
+      text-decoration: none;
+      margin: 0 1rem;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: var(--color-fg);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      animation: fadeIn 0.3s;
+    }
+
+    .modal-content {
+      background-color: var(--color-bg-secondary);
+      margin: clamp(2rem, 8vh, 5%) auto;
+      padding: 2.5rem;
+      border-radius: 15px;
+      border: 1px solid var(--color-border);
+      width: 90%;
+      max-width: 450px;
+      position: relative;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+      animation: slideIn 0.4s;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideIn { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .close {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      color: var(--color-fg-muted);
+      transition: color 0.3s;
+    }
+
+    .close:hover { color: var(--color-fg); }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--color-fg);
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--color-border);
+      background: rgba(13, 17, 23, 0.8);
+      color: var(--color-fg);
+      font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+    }
+
+    .error {
+      color: var(--color-danger);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .success {
+      color: var(--color-success);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 1rem 0;
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top: 3px solid var(--color-accent);
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 0.5rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .medical-image {
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+
+    .medical-image:hover {
+      transform: scale(1.02);
+    }
+
+    .image-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+
+    .image-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 1rem;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .image-container:hover .image-overlay {
+      transform: translateY(0);
+    }
+
+    @media (max-width: 900px) {
+      .main-header {
+        padding: 1rem;
+      }
+
+      .main-nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: var(--header-bg);
+        flex-direction: column;
+        padding: 1rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        border-top: 1px solid var(--color-border);
+      }
+
+      .main-nav.active {
+        display: flex;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .nav-cta {
+        margin-left: 0;
+        text-align: center;
+      }
+
+      .hero {
+        padding-top: 6rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .main-container {
+        padding: 0 1.5rem 4rem;
+      }
+      .main-header {
+        padding: 0.8rem 1rem;
+      }
+      .main-nav a {
+        margin: 0 0.5rem;
+      }
+      .btn {
+        width: 100%;
+      }
+      .stats-section {
+        margin: 3rem 0;
+        padding: 2rem 0;
+      }
+
+      .logo-text {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="background-animation"></div>
+
+<header class="main-header">
+  <a href="#home" class="header-logo">
+    <div class="logo-container">
+      <div class="logo-icon">
+        <i class="bi bi-heart-pulse"></i>
+      </div>
+      <div class="logo-text">
+        <span class="logo-main">MediQ</span>
+        <span class="logo-tagline">HEALTHCARE SOLUTIONS</span>
+      </div>
+    </div>
+  </a>
+
+  <button class="mobile-menu-btn" id="mobileMenuBtn">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <nav class="main-nav" id="mainNav">
+    <a href="#features">Features</a>
+    <a href="#services">Services</a>
+    <a href="#testimonials">Testimonials</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<div id="tsparticles"></div>
+
+<main class="main-container">
+  <section class="hero" id="home">
+    <h1 class="hero-title reveal">Advanced Care Management <span class="char" style="color: var(--color-medical-blue);">Simplified</span></h1>
+    <p class="hero-subtitle reveal">Streamline your healthcare operations with our comprehensive hospital management system. Manage appointments, patient records, billing, and more in one integrated platform.</p>
+    <div class="cta-buttons reveal">
+      <a class="btn btn-outline-secondary hover-lift" th:href="@{/getstart}">
+        <i class="bi bi-arrow-right me-2"></i> Get Started
+      </a>
+
+      <a th:href="@{/loginP}" class="btn btn-secondary">Patients Login</a>
+
+
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <h2 class="section-title reveal">Powerful Features</h2>
+    <p class="section-subtitle reveal">Our hospital management system comes with everything you need to streamline operations and improve patient care.</p>
+    <div class="features-grid">
+      <div class="interactive-card reveal">
+        <div class="feature-icon icon-blue">📅</div>
+        <h3>Appointment Management</h3>
+        <p>Schedule, reschedule, and manage patient appointments with our intuitive calendar system. Send automated reminders to reduce no-shows.</p>
+      </div>
+      <div class="interactive-card reveal" style="transition-delay: 0.1s;">
+        <div class="feature-icon icon-green">📋</div>
+        <h3>Electronic Health Records</h3>
+        <p>Maintain comprehensive digital health records with secure access controls. Track patient history, medications, and treatment plans.</p>
+      </div>
+      <div class="interactive-card reveal" style="transition-delay: 0.2s;">
+        <div class="feature-icon icon-teal">💰</div>
+        <h3>Billing & Insurance</h3>
+        <p>Streamline billing processes, insurance claims, and payment tracking. Generate invoices and manage financial records efficiently.</p>
+      </div>
+      <div class="interactive-card reveal">
+        <div class="feature-icon icon-blue">💊</div>
+        <h3>Pharmacy Management</h3>
+        <p>Manage drug inventory, prescriptions, and pharmacy operations. Track medication usage and automate reordering.</p>
+      </div>
+      <div class="interactive-card reveal" style="transition-delay: 0.1s;">
+        <div class="feature-icon icon-green">📊</div>
+        <h3>Analytics & Reporting</h3>
+        <p>Gain insights with comprehensive analytics and reporting tools. Monitor key performance indicators and make data-driven decisions.</p>
+      </div>
+      <div class="interactive-card reveal" style="transition-delay: 0.2s;">
+        <div class="feature-icon icon-teal">🔒</div>
+        <h3>Security & Compliance</h3>
+        <p>Ensure data security with role-based access controls, audit trails, and compliance with healthcare regulations like HIPAA.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="services">
+    <h2 class="section-title reveal">Our Medical Facilities</h2>
+    <p class="section-subtitle reveal">State-of-the-art facilities equipped with the latest technology for optimal patient care.</p>
+    <div class="features-grid">
+      <div class="image-container reveal">
+        <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Hospital Facility" class="medical-image">
+        <div class="image-overlay">
+          <h5 class="mb-0">Modern Hospital Facility</h5>
+          <p class="mb-0">Equipped with latest technology</p>
+        </div>
+      </div>
+      <div class="image-container reveal" style="transition-delay: 0.1s;">
+        <img src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Medical Equipment" class="medical-image">
+        <div class="image-overlay">
+          <h5 class="mb-0">Advanced Medical Equipment</h5>
+          <p class="mb-0">State-of-the-art diagnostic tools</p>
+        </div>
+      </div>
+      <div class="image-container reveal" style="transition-delay: 0.2s;">
+        <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Patient Care" class="medical-image">
+        <div class="image-overlay">
+          <h5 class="mb-0">Compassionate Patient Care</h5>
+          <p class="mb-0">Dedicated medical professionals</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-section">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+          <div class="stat-item">
+            <div class="stat-number">500+</div>
+            <div class="stat-text">Healthcare Facilities</div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+          <div class="stat-item">
+            <div class="stat-number">50K+</div>
+            <div class="stat-text">Medical Professionals</div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+          <div class="stat-item">
+            <div class="stat-number">2M+</div>
+            <div class="stat-text">Patients Served</div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-item">
+            <div class="stat-number">99.8%</div>
+            <div class="stat-text">Uptime Record</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="testimonials">
+    <h2 class="section-title reveal">What Our Clients Say</h2>
+    <p class="section-subtitle reveal">Hear from healthcare professionals who have transformed their operations with our system.</p>
+    <div id="testimonials-container" class="testimonials-grid">
+      <div class="interactive-card reveal">
+        <div class="testimonial-text">
+          "Implementing MediQ has revolutionized our hospital's efficiency. Patient wait times have decreased by 40%, and our staff can now focus more on patient care rather than administrative tasks."
+        </div>
+        <div class="testimonial-meta">
+          <div class="testimonial-author">
+            <img src="https://api.dicebear.com/7.x/initials/svg?seed=SJ&backgroundType=gradientLinear&fontWeight=700" alt="Dr. Sarah Johnson">
+            <div>
+              <strong>Dr. Sarah Johnson</strong>
+              <div style="color: var(--color-fg-muted); font-size: 0.85rem;">Chief Medical Officer, City General Hospital</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="interactive-card reveal" style="transition-delay: 0.1s;">
+        <div class="testimonial-text">
+          "The billing and insurance module alone has saved us countless hours. Claims are processed faster, and we've seen a significant reduction in billing errors. This system pays for itself."
+        </div>
+        <div class="testimonial-meta">
+          <div class="testimonial-author">
+            <img src="https://api.dicebear.com/7.x/initials/svg?seed=MC&backgroundType=gradientLinear&fontWeight=700" alt="Michael Chen">
+            <div>
+              <strong>Michael Chen</strong>
+              <div style="color: var(--color-fg-muted); font-size: 0.85rem;">Hospital Administrator, Regional Medical Center</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <h2 class="section-title reveal">Frequently Asked Questions</h2>
+    <p class="section-subtitle reveal">Have questions about our hospital management system? We've got answers.</p>
+    <div id="faq-container" class="faq-container">
+      <details class="faq-item reveal">
+        <summary>Is MediQ compliant with healthcare regulations like HIPAA?</summary>
+        <div class="faq-content">
+          Yes, MediQ is fully compliant with HIPAA and other healthcare regulations. We implement strict security measures including encryption, access controls, and audit trails to ensure patient data is protected.
+        </div>
+      </details>
+      <details class="faq-item reveal" style="transition-delay: 0.05s;">
+        <summary>How long does it take to implement MediQ in our hospital?</summary>
+        <div class="faq-content">
+          Implementation time varies based on the size of your facility, but typically ranges from 2-6 weeks. Our team works closely with you to ensure a smooth transition with minimal disruption to your operations.
+        </div>
+      </details>
+      <details class="faq-item reveal" style="transition-delay: 0.1s;">
+        <summary>Can MediQ integrate with our existing systems?</summary>
+        <div class="faq-content">
+          Yes, MediQ offers robust integration capabilities with most existing hospital systems including laboratory information systems, pharmacy systems, and financial software through our comprehensive API.
+        </div>
+      </details>
+      <details class="faq-item reveal" style="transition-delay: 0.15s;">
+        <summary>What kind of training and support do you provide?</summary>
+        <div class="faq-content">
+          We provide comprehensive training for all staff members and offer 24/7 technical support. Our support team includes healthcare IT specialists who understand both the technical and clinical aspects of hospital operations.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <h2 class="section-title reveal">Ready to Transform Your Healthcare Facility?</h2>
+    <p class="section-subtitle reveal">Join thousands of healthcare providers who trust our system to manage their operations efficiently.</p>
+    <div style="text-align: center;" class="reveal"><button class="btn" onclick="showRegisterModal()">Start Your Free Trial</button></div>
+  </section>
+</main>
+
+<footer class="main-footer">
+  <div class="footer-logo">
+    <div class="logo-icon">
+      <i class="bi bi-heart-pulse"></i>
+    </div>
+    MediQ
+  </div>
+  <div class="cta-buttons reveal">
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Status</a>
+
+    <a th:href="@{/login}" class="btn btn-secondary">Staff Login</a>
+
+
+  </div>
+    </div>
+  <p>© 2025 MediQ. All rights reserved.</p>
+</footer>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal" aria-hidden="true" role="dialog">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('loginModal')" role="button" aria-label="Close">&times;</span>
+    <h2 style="margin-bottom: 1.5rem;">Login</h2>
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" name="email" autocomplete="email" required>
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" name="password" autocomplete="current-password" required>
+      </div>
+      <div class="loading" id="loginLoading">
+        <div class="spinner"></div>
+        <p>Logging in...</p>
+      </div>
+      <div id="loginError" class="error" role="alert"></div>
+      <button type="submit" class="btn" style="width: 100%; margin-top: 0.5rem;">Login</button>
+    </form>
+  </div>
+</div>
+
+<!-- Register Modal -->
+<div id="registerModal" class="modal" aria-hidden="true" role="dialog">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('registerModal')" role="button" aria-label="Close">&times;</span>
+    <h2 style="margin-bottom: 1.5rem;">Request a Demo</h2>
+    <form id="registerForm" novalidate>
+      <div class="form-group">
+        <label for="regFirstName">First Name</label>
+        <input type="text" id="regFirstName" name="firstName" autocomplete="given-name" required>
+      </div>
+      <div class="form-group">
+        <label for="regLastName">Last Name</label>
+        <input type="text" id="regLastName" name="lastName" autocomplete="family-name" required>
+      </div>
+      <div class="form-group">
+        <label for="regEmail">Email</label>
+        <input type="email" id="regEmail" name="email" autocomplete="email" required>
+      </div>
+      <div class="form-group">
+        <label for="regPhone">Phone</label>
+        <input type="tel" id="regPhone" name="phone" autocomplete="tel">
+      </div>
+      <div class="form-group">
+        <label for="regHospital">Hospital/Clinic Name</label>
+        <input type="text" id="regHospital" name="hospital" required>
+      </div>
+      <div class="form-group">
+        <label for="regRole">Your Role</label>
+        <select id="regRole" name="role" required>
+          <option value="">Select your role</option>
+          <option value="administrator">Hospital Administrator</option>
+          <option value="doctor">Doctor</option>
+          <option value="nurse">Nurse</option>
+          <option value="it">IT Staff</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="loading" id="registerLoading">
+        <div class="spinner"></div>
+        <p>Submitting request...</p>
+      </div>
+      <div id="registerError" class="error" role="alert"></div>
+      <div id="registerSuccess" class="success"></div>
+      <button type="submit" class="btn" style="width: 100%; margin-top: 0.5rem;">Request Demo</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+<script>
+  (function() {
+    let revealObserver;
+    let particles = [];
+    const mouse = { x: null, y: null, radius: 150 };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      setupHeroTitleAnimation();
+      setupTsParticles();
+      setupInteractiveCardEffects();
+      setupRevealObserver();
+      setupHeaderScrollEffect();
+      setupMobileMenu();
+
+      setupAuthForms();
+      attachGlobalModalCloser();
+    });
+
+    function setupTsParticles() {
+      tsParticles.load("tsparticles", {
+        background: { color: "transparent" },
+        fpsLimit: 60,
+        particles: {
+          number: { value: 60, density: { enable: true, area: 800 } },
+          color: { value: ["#58a6ff", "#26A69A", "#66BB6A"] },
+          shape: { type: "circle" },
+          opacity: { value: { min: 0.1, max: 0.6 }, random: true },
+          size: { value: { min: 1, max: 3 } },
+          links: {
+            enable: true,
+            distance: 150,
+            color: "#8b949e",
+            opacity: 0.2,
+            width: 1
+          },
+          move: {
+            enable: true,
+            speed: 1,
+            direction: "none",
+            outModes: { default: "out" }
+          }
+        },
+        interactivity: {
+          events: {
+            onHover: { enable: true, mode: "grab" },
+            onClick: { enable: true, mode: "push" }
+          },
+          modes: {
+            grab: { distance: 140, links: { opacity: 0.5 } },
+            push: { quantity: 2 }
+          }
+        },
+        detectRetina: true
+      });
+    }
+
+    function setupHeroTitleAnimation() {
+      const heroTitle = document.querySelector('.hero-title');
+      if (!heroTitle) return;
+
+      const text = heroTitle.textContent;
+      heroTitle.innerHTML = '';
+
+      text.split('').forEach((char, index) => {
+        const span = document.createElement('span');
+        span.className = 'char';
+        span.textContent = char === ' ' ? '\u00A0' : char;
+        span.style.animationDelay = `${index * 0.03}s`;
+        heroTitle.appendChild(span);
+      });
+    }
+
+    function setupInteractiveCardEffects() {
+      document.querySelectorAll('.interactive-card').forEach(attachInteractiveCardListeners);
+    }
+
+    function attachInteractiveCardListeners(card) {
+      if (!card || card.dataset.enhanced === 'true') {
+        return;
+      }
+
+      card.dataset.enhanced = 'true';
+      card.addEventListener('mousemove', event => {
+        const rect = card.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.setProperty('--mouse-x', '-1000px');
+        card.style.setProperty('--mouse-y', '-1000px');
+      });
+    }
+
+    function setupRevealObserver() {
+      revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.reveal').forEach(observeRevealElement);
+    }
+
+    function observeRevealElement(element) {
+      if (revealObserver && element) {
+        revealObserver.observe(element);
+      }
+    }
+
+    function setupHeaderScrollEffect() {
+      const header = document.querySelector('.main-header');
+
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      });
+    }
+
+    function setupMobileMenu() {
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const mainNav = document.getElementById('mainNav');
+
+      if (mobileMenuBtn && mainNav) {
+        mobileMenuBtn.addEventListener('click', () => {
+          mainNav.classList.toggle('active');
+          mobileMenuBtn.innerHTML = mainNav.classList.contains('active')
+                  ? '<i class="bi bi-x-lg"></i>'
+                  : '<i class="bi bi-list"></i>';
+        });
+
+        // Close mobile menu when clicking on a link
+        mainNav.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', () => {
+            mainNav.classList.remove('active');
+            mobileMenuBtn.innerHTML = '<i class="bi bi-list"></i>';
+          });
+        });
+      }
+    }
+
+    function setupAuthForms() {
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+
+      if (loginForm) {
+        loginForm.addEventListener('submit', handleLoginSubmit);
+      }
+
+      if (registerForm) {
+        registerForm.addEventListener('submit', handleRegisterSubmit);
+      }
+    }
+
+    async function handleLoginSubmit(event) {
+      event.preventDefault();
+
+      const loginLoading = document.getElementById('loginLoading');
+      const loginError = document.getElementById('loginError');
+
+      if (loginLoading) loginLoading.style.display = 'block';
+      if (loginError) loginError.textContent = '';
+
+      const formData = new FormData(event.target);
+      const payload = {
+        email: formData.get('email'),
+        password: formData.get('password')
+      };
+
+      try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // For demo purposes, always show success
+        if (loginError) {
+          loginError.textContent = '';
+        }
+
+        // Redirect to dashboard (simulated)
+        setTimeout(() => {
+          alert('Login successful! Redirecting to dashboard...');
+          closeModal('loginModal');
+        }, 500);
+
+      } catch (error) {
+        console.error('Login failed:', error);
+        if (loginError) {
+          loginError.textContent = 'Invalid credentials. Please try again.';
+        }
+      } finally {
+        if (loginLoading) loginLoading.style.display = 'none';
+      }
+    }
+
+    async function handleRegisterSubmit(event) {
+      event.preventDefault();
+
+      const registerLoading = document.getElementById('registerLoading');
+      const registerError = document.getElementById('registerError');
+      const registerSuccess = document.getElementById('registerSuccess');
+
+      if (registerLoading) registerLoading.style.display = 'block';
+      if (registerError) registerError.textContent = '';
+      if (registerSuccess) registerSuccess.textContent = '';
+
+      const formData = new FormData(event.target);
+      const payload = {
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        hospital: formData.get('hospital'),
+        role: formData.get('role')
+      };
+
+      try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // For demo purposes, always show success
+        if (registerSuccess) {
+          registerSuccess.textContent = 'Demo request submitted successfully! Our team will contact you within 24 hours.';
+        }
+
+        setTimeout(() => {
+          closeModal('registerModal');
+        }, 3000);
+
+      } catch (error) {
+        console.error('Registration failed:', error);
+        if (registerError) {
+          registerError.textContent = 'Request failed. Please try again.';
+        }
+      } finally {
+        if (registerLoading) registerLoading.style.display = 'none';
+      }
+    }
+
+    function attachGlobalModalCloser() {
+      window.addEventListener('click', event => {
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+
+        if (event.target === loginModal) {
+          closeModal('loginModal');
+        }
+        if (event.target === registerModal) {
+          closeModal('registerModal');
+        }
+      });
+    }
+
+    window.showLoginModal = function() {
+      const modal = document.getElementById('loginModal');
+      if (modal) {
+        modal.style.display = 'block';
+        modal.setAttribute('aria-hidden', 'false');
+      }
+    };
+
+    window.showRegisterModal = function() {
+      const modal = document.getElementById('registerModal');
+      if (modal) {
+        modal.style.display = 'block';
+        modal.setAttribute('aria-hidden', 'false');
+      }
+    };
+
+    window.closeModal = function(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+      }
+      clearAuthMessages();
+    };
+
+    function clearAuthMessages() {
+      const loginError = document.getElementById('loginError');
+      const registerError = document.getElementById('registerError');
+      const registerSuccess = document.getElementById('registerSuccess');
+
+      if (loginError) loginError.textContent = '';
+      if (registerError) registerError.textContent = '';
+      if (registerSuccess) registerSuccess.textContent = '';
+    }
+  })();
+</script>
+</body>
+</html>

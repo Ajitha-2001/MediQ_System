@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>ITAdmin Dashboard | MediQ</title>
+
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-pink: #17ac9d;
+            --light-pink: #FFF0F5;
+            --dark-pink: #40b811;
+            --accent-pink: #FFB6C1;
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --medium-gray: #e2e8f0;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #FFF5F9 0%, #FFF0F5 50%, #FFEBF3 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Animation */
+        .navbar {
+            position: relative;
+            overflow: hidden;
+        }
+        .navbar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            animation: float 20s infinite linear;
+            z-index: 1;
+        }
+        @keyframes float { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(-100px) translateY(-100px); } }
+        .navbar > .container { position: relative; z-index: 2; }
+        .navbar-brand { font-weight: 700; }
+        .nav-link { border-radius: 8px; margin: 0 2px; transition: var(--transition); }
+        .nav-link:hover { background: rgba(255, 255, 255, 0.1); }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 2rem 1.5rem; }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-pink), var(--dark-pink));
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: var(--border-radius);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-hover);
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            animation: float 20s infinite linear;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            transition: var(--transition);
+            border: 1px solid var(--medium-gray);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* KPI Cards */
+        .kpi-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            transition: var(--transition);
+            border: 1px solid var(--medium-gray);
+            height: 100%;
+        }
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        .kpi-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: var(--light-pink);
+            color: var(--primary-pink);
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn:hover::before { left: 100%; }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.3);
+        }
+        .btn.small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            transition: var(--transition);
+            border: 1px solid var(--medium-gray);
+            height: 100%;
+            text-align: center;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin: 0 auto 1.5rem;
+            background: var(--light-pink);
+            color: var(--primary-pink);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        /* Progress Bars */
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--light-gray);
+        }
+        .progress-bar {
+            background: linear-gradient(135deg, var(--primary-pink), var(--accent-pink));
+            border-radius: 4px;
+        }
+
+        /* Stat Badge */
+        .stat-badge {
+            background: var(--light-pink);
+            color: var(--dark-pink);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Activity List */
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* Utility Classes */
+        .text-muted { color: var(--text-light); }
+        .text-success { color: var(--success); }
+        .text-warning { color: var(--warning); }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content { padding: 1rem; }
+            .card { padding: 1.5rem; }
+            .hero-section { padding: 2rem 1rem; }
+            .feature-card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, var(--primary-pink), var(--dark-pink));">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/index}">
+            <i class="bi bi-hospital-fill"></i>
+            <span>MediQ</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div id="topNav" class="collapse navbar-collapse">
+
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-white-50 small">
+                    <i class="bi bi-person-circle me-1"></i>
+                    <span th:text="${#authentication?.name} ?: 'Guest'">Guest</span>
+                </span>
+
+                <!-- Show Login if anonymous -->
+                <a class="btn btn-outline-light btn-sm"
+                   th:if="${#authentication == null or #authentication.principal == null or #authentication.principal == 'anonymousUser'}"
+                   th:href="@{/login}">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                </a>
+
+                <!-- Logout must be POST -->
+                <form th:if="${#authentication != null and #authentication.principal != null and #authentication.principal != 'anonymousUser'}"
+                      th:action="@{/logout}" method="post" class="m-0">
+                    <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button class="btn btn-outline-light btn-sm" type="submit">
+                        <i class="bi bi-box-arrow-right me-1"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content">
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero-section" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-6 fw-bold mb-3">Welcome, ITAdmin</h1>
+                    <p class="lead mb-4">Manage your hospital operations efficiently with comprehensive tools and analytics.</p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a th:href="@{/patients}" class="btn" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">
+                            <i class="bi bi-people me-2"></i>Manage Patients
+                        </a>
+                        <a th:href="@{/appointments}" class="btn" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">
+                            <i class="bi bi-calendar-check me-2"></i>View Appointments
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KPIs -->
+        <section class="row g-3 mb-4">
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted small">Total Users</div>
+                            <div class="fs-4 fw-bold" th:text="${totalUsers}">1,248</div>
+                        </div>
+                        <div class="kpi-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                    </div>
+                    <div class="small text-success mt-2">
+                        <i class="bi bi-arrow-up-right me-1"></i>+4.2% this month
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="150">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted small">Active Staff</div>
+                            <div class="fs-4 fw-bold" th:text="${activeStaff}">312</div>
+                        </div>
+                        <div class="kpi-icon">
+                            <i class="bi bi-briefcase-medical"></i>
+                        </div>
+                    </div>
+                    <div class="small text-success mt-2">
+                        <i class="bi bi-arrow-up-right me-1"></i>+1.1% this week
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted small">Appointments Today</div>
+                            <div class="fs-4 fw-bold" th:text="${appointmentsToday}">86</div>
+                        </div>
+                        <div class="kpi-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                    </div>
+                    <div class="small text-warning mt-2">
+                        <i class="bi bi-arrow-down-right me-1"></i>-0.9% from yesterday
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="250">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-muted small">Revenue This Month</div>
+                            <div class="fs-4 fw-bold">$24,580</div>
+                        </div>
+                        <div class="kpi-icon">
+                            <i class="bi bi-currency-dollar"></i>
+                        </div>
+                    </div>
+                    <div class="small text-success mt-2">
+                        <i class="bi bi-arrow-up-right me-1"></i>+12.5% from last month
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Buttons Section -->
+        <section class="mb-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="mb-4 fw-bold">
+                        <i class="bi bi-grid-3x3-gap me-2"></i>Management Modules
+                    </h5>
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="bi bi-person-plus"></i>
+                                </div>
+                                <h5 class="fw-bold mb-2">Patient Management</h5>
+                                <p class="text-muted small mb-3">Register new patients and manage existing patient profiles</p>
+                                <a th:href="@{/patients}" class="btn small">Access Module</a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-4">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="bi bi-calendar-event"></i>
+                                </div>
+                                <h5 class="fw-bold mb-2">Appointment Scheduling</h5>
+                                <p class="text-muted small mb-3">Schedule and manage patient appointments efficiently</p>
+                                <a th:href="@{/appointments}" class="btn small">Access Module</a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-4">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="bi bi-file-medical"></i>
+                                </div>
+                                <h5 class="fw-bold mb-2">Medical Records</h5>
+                                <p class="text-muted small mb-3">Manage patient medical history and prescriptions</p>
+                                <a th:href="@{/medical/records}" class="btn small">Access Module</a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-4">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="bi bi-prescription2"></i>
+                                </div>
+                                <h5 class="fw-bold mb-2">Prescriptions</h5>
+                                <p class="text-muted small mb-3">Manage and track patient medication prescriptions</p>
+                                <a th:href="@{/prescriptions}" class="btn small">Access Module</a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-4">
+                            <div class="feature-card">
+                                <div class="feature-icon">
+                                    <i class="bi bi-graph-up"></i>
+                                </div>
+                                <h5 class="fw-bold mb-2">Analytics & Reports</h5>
+                                <p class="text-muted small mb-3">Generate reports and analyze hospital performance</p>
+                                <a th:href="@{/reports}" class="btn small">Access Reports</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts & Analytics Section -->
+        <section class="row g-4">
+            <div class="col-lg-8">
+                <div class="card h-100" data-aos="fade-up" data-aos-delay="350">
+                    <div class="card-body">
+                        <h5 class="mb-4 fw-bold">
+                            <i class="bi bi-graph-up-arrow me-2"></i>Hospital Analytics Overview
+                        </h5>
+                        <div class="chart-container">
+                            <canvas id="analyticsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card h-100" data-aos="fade-up" data-aos-delay="400">
+                    <div class="card-body">
+                        <h5 class="mb-4 fw-bold">
+                            <i class="bi bi-activity me-2"></i>Department Performance
+                        </h5>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Emergency</span>
+                                <span class="stat-badge">92%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Cardiology</span>
+                                <span class="stat-badge">87%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: 87%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Pediatrics</span>
+                                <span class="stat-badge">78%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Orthopedics</span>
+                                <span class="stat-badge">85%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Activity & Quick Stats -->
+        <section class="row g-4 mt-2">
+            <div class="col-lg-6">
+                <div class="card h-100" data-aos="fade-up" data-aos-delay="450">
+                    <div class="card-body">
+                        <h5 class="mb-4 fw-bold">
+                            <i class="bi bi-clock-history me-2"></i>Recent Activity
+                        </h5>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                                    <i class="bi bi-person-plus"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-medium">New patient registered</div>
+                                    <div class="text-muted small">John Doe registered 2 hours ago</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--info);">
+                                    <i class="bi bi-calendar-check"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-medium">Appointment completed</div>
+                                    <div class="text-muted small">Dr. Smith completed appointment 4 hours ago</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon" style="background: rgba(255, 105, 180, 0.1); color: var(--primary-pink);">
+                                    <i class="bi bi-file-earmark-medical"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-medium">Medical record updated</div>
+                                    <div class="text-muted small">Sarah Johnson's record updated 6 hours ago</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                                    <i class="bi bi-cash-coin"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-medium">Payment received</div>
+                                    <div class="text-muted small">Payment of $350 received from Michael Brown</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card h-100" data-aos="fade-up" data-aos-delay="500">
+                    <div class="card-body">
+                        <h5 class="mb-4 fw-bold">
+                            <i class="bi bi-pie-chart me-2"></i>Patient Distribution
+                        </h5>
+                        <div class="chart-container">
+                            <canvas id="patientDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="mt-5">
+    <div class="container py-4 text-center text-muted small">
+        © <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2025</span> MediQ
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+    // Initialize AOS animations
+    AOS.init({
+        duration: 800,
+        once: true,
+        offset: 50
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Analytics Chart
+        const analyticsCtx = document.getElementById('analyticsChart');
+        if (analyticsCtx) {
+            new Chart(analyticsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                        {
+                            label: 'Patients',
+                            data: [120, 190, 170, 220, 180, 250],
+                            backgroundColor: 'rgb(21,179,16)',
+                            borderColor: 'rgb(21,179,16)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Appointments',
+                            data: [80, 120, 140, 160, 150, 200],
+                            backgroundColor: 'rgb(21,179,16)',
+                            borderColor: 'rgb(21,179,16)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Patient Distribution Chart
+        const patientDistributionCtx = document.getElementById('patientDistributionChart');
+        if (patientDistributionCtx) {
+            new Chart(patientDistributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Emergency', 'Cardiology', 'Pediatrics', 'Orthopedics', 'Neurology'],
+                    datasets: [{
+                        data: [30, 25, 20, 15, 10],
+                        backgroundColor: [
+                            'rgb(21,179,16)',
+                            'rgb(21,179,16)',
+                            'rgb(21,179,16)',
+                            'rgb(21,179,16)',
+                            'rgb(21,179,16)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

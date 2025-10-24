@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Edit Bill • HMS</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-purple: #8B5FBF;
+            --light-purple: #F5F0FF;
+            --dark-purple: #6D28D9;
+            --accent-purple: #A78BFA;
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --medium-gray: #e2e8f0;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --success: #10b981;
+            --warning: #f50b26;
+            --error: #ef4444;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: linear-gradient(135deg, #F9F7FF 0%, #F5F0FF 50%, #F0EBFF 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        /* Card Styles */
+        .card-modern {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 0;
+            transition: var(--transition);
+            border: 1px solid var(--medium-gray);
+            position: relative;
+            overflow: hidden;
+            max-width: 750px;
+            width: 100%;
+        }
+        .card-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+        }
+        .card-modern:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header-modern {
+            background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple)) !important;
+            border: none;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-header-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            animation: float 20s infinite linear;
+            z-index: 1;
+        }
+        @keyframes float {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(-100px) translateY(-100px); }
+        }
+        .card-header-modern > .d-flex { position: relative; z-index: 2; }
+
+        /* Form Styles */
+        .form-control-modern {
+            border: 2px solid var(--medium-gray);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: var(--transition);
+            background: var(--white);
+        }
+        .form-control-modern:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(139, 95, 191, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn:hover::before {
+            left: 100%;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 95, 191, 0.3);
+        }
+        .btn.secondary {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--medium-gray);
+        }
+        .btn.secondary:hover {
+            background: var(--medium-gray);
+            color: var(--text-dark);
+            border-color: var(--text-light);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .required:after {
+            content: " *";
+            color: var(--error);
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .page-title::before {
+            content: '';
+            width: 4px;
+            height: 28px;
+            background: var(--primary-purple);
+            border-radius: 2px;
+        }
+        .page-subtitle {
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--medium-gray);
+        }
+        .btn-flex {
+            flex: 1;
+            text-align: center;
+            justify-content: center;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="card card-modern" data-aos="fade-up">
+    <div class="card-header-modern text-white">
+        <div class="d-flex align-items-center">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>Edit Bill</h5>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">
+                    <i class="bi bi-receipt"></i>
+                    Edit Bill
+                </h1>
+                <p class="page-subtitle">Update billing information for the patient</p>
+            </div>
+            <div data-aos="fade-left" data-aos-delay="200">
+                <a th:href="@{/billing}" class="btn secondary">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to Bills
+                </a>
+            </div>
+        </div>
+
+        <form th:action="@{|/billing/${bill.billId}/edit|}" method="post" id="billForm" novalidate>
+            <div th:if="${error}" class="alert alert-danger mb-4">
+                <i class="bi bi-exclamation-triangle me-2"></i><span th:text="${error}">Error</span>
+            </div>
+
+            <!-- Patient -->
+            <div class="mb-4" data-aos="fade-right" data-aos-delay="100">
+                <label for="patient" class="form-label required">Patient</label>
+                <select id="patient" name="patient.id" class="form-select form-control-modern" required>
+                    <option value="">-- Select Patient --</option>
+                    <option th:each="p : ${patients}"
+                            th:value="${p.id}"
+                            th:text="${(p.firstName ?: '') + ' ' + (p.lastName ?: '')}"
+                            th:selected="${bill.patientId != null and p.id == bill.patientId}">
+                    </option>
+                </select>
+                <div class="error-message" id="patient-error"></div>
+            </div>
+
+            <!-- Amount -->
+            <div class="mb-4" data-aos="fade-left" data-aos-delay="100">
+                <label for="amount" class="form-label required">Amount</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">Rs.</span>
+                    <input type="number" id="amount" name="amount" step="0.01" min="0"
+                           class="form-control form-control-modern border-start-0"
+                           th:value="${bill.amount}" required/>
+                </div>
+                <div class="error-message" id="amount-error"></div>
+            </div>
+
+            <!-- Payment Status -->
+            <div class="mb-4" data-aos="fade-right" data-aos-delay="200">
+                <label for="paymentStatus" class="form-label required">Payment Status</label>
+                <select id="paymentStatus" name="paymentStatus" class="form-select form-control-modern" required>
+                    <option value="">-- Select Status --</option>
+                    <option value="Paid" th:selected="${bill.paymentStatus == 'Paid'}">Paid</option>
+                    <option value="Unpaid" th:selected="${bill.paymentStatus == 'Unpaid'}">Unpaid</option>
+                    <option value="Partial" th:selected="${bill.paymentStatus == 'Partial'}">Partial</option>
+                </select>
+                <div class="error-message" id="paymentStatus-error"></div>
+            </div>
+
+            <!-- Date Issued -->
+            <div class="mb-4" data-aos="fade-left" data-aos-delay="200">
+                <label for="dateIssued" class="form-label required">Date Issued</label>
+                <input type="date" id="dateIssued" name="dateIssued"
+                       class="form-control form-control-modern"
+                       th:value="${bill.dateIssued}" required/>
+                <div class="error-message" id="dateIssued-error"></div>
+            </div>
+
+            <!-- Due Date -->
+            <div class="mb-4" data-aos="fade-right" data-aos-delay="300">
+                <label for="dueDate" class="form-label">Due Date</label>
+                <input type="date" id="dueDate" name="dueDate" class="form-control form-control-modern"
+                       th:value="${bill.dueDate}"/>
+            </div>
+
+            <!-- Items/Description -->
+            <div class="mb-4" data-aos="fade-left" data-aos-delay="300">
+                <label for="items" class="form-label">Items / Description</label>
+                <textarea id="items" name="items" class="form-control form-control-modern" rows="3"
+                          th:text="${bill.items}" placeholder="Describe services or medications"></textarea>
+            </div>
+
+            <div class="action-buttons" data-aos="fade-up" data-aos-delay="400">
+                <button type="submit" class="btn btn-flex">
+                    <i class="bi bi-check-circle me-2"></i> Update Bill
+                </button>
+                <a th:href="@{/billing}" class="btn secondary btn-flex">
+                    <i class="bi bi-x-circle me-2"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('billForm');
+        const req = form.querySelectorAll('[required]');
+        const validate = (el) => {
+            const v = el.value?.trim();
+            const err = document.getElementById(`${el.id}-error`);
+            if (err) err.textContent = '';
+            if (el.hasAttribute('required') && !v){ if (err) err.textContent = 'This field is required'; return false; }
+            if (el.id==='amount' && v && parseFloat(v)<=0){ if (err) err.textContent='Amount must be greater than 0'; return false; }
+            if (el.id==='dueDate' && v && document.getElementById('dateIssued').value){
+                const d1=new Date(document.getElementById('dateIssued').value), d2=new Date(v);
+                if (d2<d1){ if (err) err.textContent='Due date cannot be before date issued'; return false; }
+            }
+            return true;
+        };
+        req.forEach(f=>{ f.addEventListener('blur',e=>validate(e.target)); f.addEventListener('input',e=>{const er=document.getElementById(`${e.target.id}-error`); if(er) er.textContent='';});});
+        form.addEventListener('submit',e=>{ let ok=true; req.forEach(f=>{ if(!validate(f)) ok=false;}); if(!ok) e.preventDefault();});
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>AOS.init({duration:800,once:true,offset:50});</script>
+</body>
+</html>

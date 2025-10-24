@@ -1,0 +1,174 @@
+    <!DOCTYPE html>
+    <html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Treatment Plan • HMS</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+        <style>
+            :root {
+                --primary-yellow: #d97706;
+                --accent-yellow: #f59e0b;
+                --light-yellow: #fef7e6;
+                --dark-yellow: #92400e;
+                --white: #ffffff;
+                --light-gray: #f8fafc;
+                --medium-gray: #e2e8f0;
+                --text-dark: #1e293b;
+                --text-light: #64748b;
+            }
+
+            body {
+                background: linear-gradient(135deg, #fef7e6 0%, #ffffff 50%, #fef7e6 100%);
+                min-height: 100vh;
+                font-family: 'Inter', sans-serif;
+                color: var(--text-dark);
+            }
+
+            .container { max-width: 900px; margin: 3rem auto; }
+            .card {
+                background: var(--white);
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                padding: 2rem;
+                border: 1px solid var(--medium-gray);
+            }
+            h2 {
+                color: var(--dark-yellow);
+                margin-bottom: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .input {
+                width: 100%;
+                padding: 0.75rem;
+                border: 2px solid var(--medium-gray);
+                border-radius: 8px;
+                font-size: 1rem;
+            }
+            .input:focus {
+                outline: none;
+                border-color: var(--primary-yellow);
+                box-shadow: 0 0 0 3px rgba(217,119,6,0.1);
+            }
+            .btn {
+                background: linear-gradient(135deg, var(--primary-yellow), var(--accent-yellow));
+                color: white;
+                border: none;
+                padding: 0.75rem 2rem;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+            .btn:hover { opacity: 0.9; }
+            .btn.secondary {
+                background: transparent;
+                border: 2px solid var(--medium-gray);
+                color: var(--text-light);
+            }
+            .grid-2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
+            }
+        </style>
+    </head>
+    <body>
+
+    <div class="container">
+        <div class="card">
+            <h2><i class="bi bi-clipboard2-pulse"></i> Treatment Plan Details</h2>
+
+            <!-- ✅ This form now binds to your Spring model -->
+            <form th:object="${plan}"
+                  th:action="@{/medical/records/{id}/plans(id=${record.id})}"
+                  method="post">
+
+                <div class="form-group">
+                    <label class="required">Plan Title</label>
+                    <input type="text" th:field="*{title}" class="input"
+                           placeholder="e.g., Post-operative Rehabilitation Plan">
+                </div>
+
+                <div class="form-group">
+                    <label class="required">Treatment Description</label>
+                    <textarea th:field="*{description}" class="input"
+                              placeholder="Describe the treatment approach..." rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="required">Treatment Goals</label>
+                    <textarea th:field="*{goals}" class="input"
+                              placeholder="List specific measurable goals..." rows="3"></textarea>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" th:field="*{startDate}" class="input">
+                    </div>
+
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" th:field="*{endDate}" class="input">
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Treatment Phase</label>
+                        <select th:field="*{phase}" class="input">
+                            <option value="">Select Phase</option>
+                            <option value="Initial">Initial Assessment</option>
+                            <option value="Active">Active Treatment</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Rehabilitation">Rehabilitation</option>
+                            <option value="Preventive">Preventive Care</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Plan Status</label>
+                        <select th:field="*{status}" class="input">
+                            <option value="Draft">Draft</option>
+                            <option value="Active">Active</option>
+                            <option value="On Hold">On Hold</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Interventions</label>
+                    <textarea th:field="*{interventions}" class="input"
+                              placeholder="List specific interventions..." rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Monitoring & Evaluation</label>
+                    <textarea th:field="*{monitoring}" class="input"
+                              placeholder="Describe evaluation methods..." rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Patient Education</label>
+                    <textarea th:field="*{education}" class="input"
+                              placeholder="Add patient instructions..." rows="3"></textarea>
+                </div>
+
+                <div class="grid-2">
+                    <button type="submit" class="btn">
+                        <i class="bi bi-save"></i> Save Treatment Plan
+                    </button>
+                    <a th:href="@{/medical/records/{id}/plans(id=${record.id})}" class="btn secondary">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    </body>
+    </html>

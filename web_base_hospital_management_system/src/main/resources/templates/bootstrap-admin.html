@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head('Create First Admin | HMS')"></head>
+<body class="auth-bg">
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card card-radius shadow">
+                <div class="card-header bg-warning">
+                    <strong><i class="bi bi-exclamation-triangle me-1"></i> Create First Admin</strong>
+                </div>
+                <div class="card-body p-4 p-lg-5">
+
+                    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+                    <form th:action="@{/bootstrap-admin}" th:object="${form}" method="post" class="needs-validation" novalidate>
+                        <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                <input class="form-control" th:field="*{firstName}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                <input class="form-control" th:field="*{lastName}" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Username</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">@</span>
+                                    <input class="form-control" th:field="*{username}" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" th:field="*{email}" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                    <input id="pwd1" type="password" class="form-control" th:field="*{password}" minlength="6" required>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="togglePwd('pwd1', this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 d-flex gap-2">
+                            <button class="btn btn-warning px-4" type="submit">
+                                <i class="bi bi-check2-circle me-1"></i> Create Admin
+                            </button>
+                            <a class="btn btn-outline-secondary" th:href="@{/login}">
+                                <i class="bi bi-arrow-left me-1"></i> Back to Login
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script>
+    (() => {
+        const form = document.querySelector('.needs-validation');
+        if (!form) return;
+        form.addEventListener('submit', (e) => {
+            if (!form.checkValidity()) { e.preventDefault(); e.stopPropagation(); }
+            form.classList.add('was-validated');
+        });
+    })();
+    function togglePwd(id, btn){
+        const input=document.getElementById(id);
+        const isPwd=input.type==='password';
+        input.type=isPwd?'text':'password';
+        const icon=btn.querySelector('i');
+        if(icon) icon.className=isPwd?'bi bi-eye-slash':'bi bi-eye';
+    }
+</script>
+</body>
+</html>

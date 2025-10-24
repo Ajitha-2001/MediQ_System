@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Billing Dashboard • HMS</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-purple: #8B5FBF;
+            --light-purple: #F5F0FF;
+            --dark-purple: #6D28D9;
+            --accent-purple: #A78BFA;
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --medium-gray: #e2e8f0;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: linear-gradient(135deg, #F9F7FF 0%, #F5F0FF 50%, #F0EBFF 100%);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Animation */
+        .navbar {
+            position: relative;
+            overflow: hidden;
+        }
+        .navbar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            animation: float 20s infinite linear;
+            z-index: 1;
+        }
+        @keyframes float { 0% { transform: translateX(0) translateY(0); } 100% { transform: translateX(-100px) translateY(-100px); } }
+        .navbar > .container { position: relative; z-index: 2; }
+        .navbar-brand { font-weight: 700; }
+        .nav-link { border-radius: 8px; margin: 0 2px; transition: var(--transition); }
+        .nav-link:hover { background: rgba(255, 255, 255, 0.1); }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 2rem 1.5rem; }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* Page Header */
+        .page-header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; }
+        .page-title { font-size: 2rem; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 0.75rem; }
+        .page-title::before { content: ''; width: 4px; height: 28px; background: var(--primary-purple); border-radius: 2px; }
+        .page-subtitle { color: var(--text-light); margin-top: 0.5rem; }
+
+        /* Card Styles */
+        .card-modern {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 0;
+            transition: var(--transition);
+            border: 1px solid var(--medium-gray);
+            position: relative;
+            overflow: hidden;
+        }
+        .card-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+        }
+        .card-modern:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header-modern {
+            background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple)) !important;
+            border: none;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-header-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            animation: float 20s infinite linear;
+            z-index: 1;
+        }
+        .card-header-modern > .d-flex { position: relative; z-index: 2; }
+
+        /* Stats Cards */
+        .stats-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            transition: var(--transition);
+            border: 1px solid var(--medium-gray);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        .stats-card.total::before { background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple)); }
+        .stats-card.paid::before { background: linear-gradient(135deg, var(--success), #059669); }
+        .stats-card.unpaid::before { background: linear-gradient(135deg, var(--error), #dc2626); }
+        .stats-card.partial::before { background: linear-gradient(135deg, var(--warning), #d97706); }
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+            color: white;
+        }
+        .stats-icon.total { background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple)); }
+        .stats-icon.paid { background: linear-gradient(135deg, var(--success), #059669); }
+        .stats-icon.unpaid { background: linear-gradient(135deg, var(--error), #dc2626); }
+        .stats-icon.partial { background: linear-gradient(135deg, var(--warning), #d97706); }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--primary-purple), var(--accent-purple));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn:hover::before { left: 100%; }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 95, 191, 0.3);
+        }
+        .btn.secondary {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--medium-gray);
+        }
+        .btn.secondary:hover {
+            background: var(--medium-gray);
+            color: var(--text-dark);
+            border-color: var(--text-light);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+        }
+
+        /* Table Styles */
+        .table-modern thead th {
+            background: var(--light-purple);
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            border-bottom: 2px solid var(--medium-gray);
+        }
+        .table-modern tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--medium-gray);
+            vertical-align: middle;
+            transition: var(--transition);
+        }
+        .table-modern tbody tr:hover td {
+            background-color: rgba(139, 95, 191, 0.05);
+        }
+
+        /* Badge Styles */
+        .badge-modern {
+            border-radius: 6px;
+            font-weight: 500;
+            padding: .35rem .65rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .badge-paid {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .badge-unpaid {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .badge-partial {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-up { animation: fadeInUp 0.6s ease-out; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/index}">
+            <i class="bi bi-hospital-fill"></i>
+            <span>MediQ</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div id="topNav" class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link active" th:href="@{/billing/dashboard}">Billing Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/billing}">Billing Records</a></li>
+            </ul>
+
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-white-50 small">
+                    <i class="bi bi-person-circle me-1"></i>
+                    <span th:text="${#authentication?.name} ?: 'Guest'">Guest</span>
+                </span>
+
+                <!-- Logout must be POST -->
+                <form th:if="${#authentication != null and #authentication.principal != null and #authentication.principal != 'anonymousUser'}"
+                      th:action="@{/logout}" method="post" class="m-0">
+                    <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button class="btn btn-outline-light btn-sm" type="submit">
+                        <i class="bi bi-box-arrow-right me-1"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Breadcrumb -->
+<nav class="container mt-3" aria-label="breadcrumb" data-aos="fade-down">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Billing Dashboard</li>
+    </ol>
+</nav>
+
+<main class="main-content">
+    <div class="container">
+        <div class="page-header" data-aos="fade-up">
+            <div>
+                <h1 class="page-title">
+                    <i class="bi bi-receipt"></i>
+                    Billing Dashboard
+                </h1>
+                <p class="page-subtitle">Manage invoices & payments with ease</p>
+            </div>
+            <div data-aos="fade-left" data-aos-delay="200">
+                <div class="d-flex gap-2">
+                    <a th:href="@{/billing}" class="btn secondary">
+                        <i class="bi bi-list me-2"></i> Manage Bills
+                    </a>
+                    <a th:href="@{/billing/add}" class="btn">
+                        <i class="bi bi-plus-lg me-2"></i> Add New Bill
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Summary -->
+        <div class="row mb-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="col-md-3">
+                <div class="stats-card total" data-aos="fade-right" data-aos-delay="100">
+                    <div class="stats-icon total">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                    <h4 class="fw-bold mb-0" th:text="${total}">0</h4>
+                    <p class="text-muted mb-0">Total Bills</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card paid" data-aos="fade-right" data-aos-delay="200">
+                    <div class="stats-icon paid">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <h4 class="fw-bold mb-0" th:text="${paid}">0</h4>
+                    <p class="text-muted mb-0">Paid</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card unpaid" data-aos="fade-left" data-aos-delay="200">
+                    <div class="stats-icon unpaid">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                    <h4 class="fw-bold mb-0" th:text="${unpaid}">0</h4>
+                    <p class="text-muted mb-0">Unpaid</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card partial" data-aos="fade-left" data-aos-delay="100">
+                    <div class="stats-icon partial">
+                        <i class="bi bi-clock"></i>
+                    </div>
+                    <h4 class="fw-bold mb-0" th:text="${partial}">0</h4>
+                    <p class="text-muted mb-0">Partial</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-modern" data-aos="fade-up" data-aos-delay="300">
+            <div class="card-header-modern text-white">
+                <div class="d-flex align-items-center">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2"></i>Recent Bills</h5>
+                    <span class="badge bg-light text-dark ms-2 fs-6" th:text="${#lists.size(recent)}">0</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-modern table-hover mb-0">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Patient</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="b, stat : ${recent}" data-aos="fade-up" th:attr="data-aos-delay=${stat.index * 100}">
+                            <td class="fw-semibold" style="color: var(--primary-purple);" th:text="${b.billId}">1</td>
+                            <td th:text="${b.patientFullName ?: '—'}">John Doe</td>
+                            <td>
+                                <span th:if="${b.paymentStatus == 'Paid'}" class="badge badge-modern badge-paid">
+                                    <i class="bi bi-check-circle me-1"></i>Paid
+                                </span>
+                                <span th:if="${b.paymentStatus == 'Unpaid'}" class="badge badge-modern badge-unpaid">
+                                    <i class="bi bi-x-circle me-1"></i>Unpaid
+                                </span>
+                                <span th:if="${b.paymentStatus == 'Partial'}" class="badge badge-modern badge-partial">
+                                    <i class="bi bi-clock me-1"></i>Partial
+                                </span>
+                            </td>
+                            <td class="fw-semibold" th:text="'Rs. ' + ${b.amount}">Rs. 150.00</td>
+                            <td th:text="${b.dateIssued}">2023-11-15</td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-2 flex-wrap">
+                                    <a class="btn btn-outline-secondary btn-sm" th:href="@{'/billing/' + ${b.billId} + '/invoice'}" title="View Invoice">
+                                        <i class="bi bi-file-earmark-text"></i>
+                                    </a>
+                                    <a class="btn btn-warning btn-sm" th:href="@{'/billing/' + ${b.billId} + '/edit'}" title="Edit Bill">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(recent)}">
+                            <td colspan="6" class="text-center text-muted py-5">
+                                <i class="bi bi-receipt display-4 text-muted mb-3 d-block"></i>
+                                <h5 class="fw-semibold">No recent bills</h5>
+                                <p class="text-muted">Recent bills will appear here.</p>
+                                <a th:href="@{/billing/add}" class="btn mt-2">
+                                    <i class="bi bi-plus-circle me-2"></i>Add New Bill
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="mt-5">
+    <div class="container py-4 text-center text-muted small">
+        © <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2025</span> MediQ - Billing Module
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+    // Initialize AOS animations
+    AOS.init({
+        duration: 800,
+        once: true,
+        offset: 50
+    });
+</script>
+</body>
+</html>

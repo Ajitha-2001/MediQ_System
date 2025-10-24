@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediQ - Advanced Hospital Management System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --color-bg: #000000;
+            --color-bg-secondary: #12151c;
+            --color-fg: #e6edf3;
+            --color-fg-muted: #8b949e;
+            --color-border: #2a2f37;
+            --color-accent: #58a6ff;
+            --color-success: #3fb950;
+            --color-danger: #f85149;
+            --color-medical-blue: #1976D2;
+            --color-medical-green: #388E3C;
+            --color-medical-teal: #26A69A;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            --glow-blue: #79c0ff;
+            --glow-teal: #26A69A;
+            --glow-green: #66BB6A;
+            --header-bg: rgba(13, 17, 23, 0.95);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--color-bg);
+            color: var(--color-fg);
+            position: relative;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        a { color: inherit; }
+
+        #tsparticles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Enhanced Background Animation */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background:
+                    radial-gradient(circle at 20% 80%, rgba(25, 118, 210, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(38, 166, 154, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(56, 142, 60, 0.08) 0%, transparent 50%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            background: linear-gradient(135deg, var(--color-medical-blue), var(--color-medical-teal));
+            border-radius: 50%;
+            opacity: 0.1;
+            filter: blur(40px);
+            animation: float 20s infinite linear;
+        }
+
+        .shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+            animation-duration: 25s;
+        }
+
+        .shape:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            top: 60%;
+            right: 10%;
+            animation-delay: -5s;
+            animation-duration: 30s;
+        }
+
+        .shape:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: -10s;
+            animation-duration: 20s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(30px, -50px) rotate(120deg);
+            }
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 6rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Enhanced Header Styles */
+        .main-header {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--header-bg);
+            backdrop-filter: blur(15px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(42, 47, 55, 0.5);
+            user-select: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-header.scrolled {
+            padding: 0.8rem 2rem;
+            background: rgba(13, 17, 23, 0.98);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-fg);
+            text-decoration: none;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--color-medical-blue), var(--color-medical-teal));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .logo-icon i {
+            font-size: 1.5rem;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .logo-main {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-medical-blue), var(--color-medical-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-tagline {
+            font-size: 0.7rem;
+            color: var(--color-fg-muted);
+            letter-spacing: 1px;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .main-nav a {
+            color: var(--color-fg-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            user-select: none;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .main-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--color-medical-blue), var(--color-medical-teal));
+            transition: width 0.3s ease;
+        }
+
+        .main-nav a:hover {
+            color: var(--color-fg);
+        }
+
+        .main-nav a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            margin-left: 1.5rem;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, var(--color-medical-blue), var(--color-medical-teal));
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+        }
+
+        .nav-cta::after {
+            display: none;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-fg);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Enhanced Get Started Button */
+        .get-started-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--color-medical-blue), var(--color-medical-teal));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.4s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(25, 118, 210, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .get-started-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+            z-index: -1;
+        }
+
+        .get-started-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(25, 118, 210, 0.5), 0 0 25px rgba(38, 166, 154, 0.4);
+        }
+
+        .get-started-btn:hover::before {
+            left: 100%;
+        }
+
+        .get-started-btn i {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .get-started-btn:hover i {
+            transform: translateX(5px);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 8rem 0 6rem;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            color: var(--color-fg);
+            max-width: 900px;
+            user-select: none;
+        }
+
+        .hero-title .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: char-reveal 0.5s forwards;
+            user-select: none;
+        }
+
+        @keyframes char-reveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--color-fg-muted);
+            max-width: 650px;
+            line-height: 1.6;
+            user-select: none;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            user-select: none;
+        }
+
+        .section {
+            padding: 6rem 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+            user-select: none;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--color-fg-muted);
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            user-select: none;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Enhanced Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .interactive-card {
+            background: rgba(22, 27, 34, 0.8);
+            border: 1px solid var(--color-border);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .interactive-card::before {
+            content: "";
+            position: absolute;
+            left: var(--mouse-x, -1000px);
+            top: var(--mouse-y, -1000px);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(121, 192, 255, 0.25) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: left 0.2s, top 0.2s;
+            opacity: 0;
+        }
+
+        .interactive-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(88, 166, 255, 0.3);
+        }
+
+        .interactive-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .interactive-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+
+        .icon-blue {
+            background: linear-gradient(135deg, var(--color-medical-blue), #42A5F5);
+            box-shadow: 0 8px 20px rgba(25, 118, 210, 0.3);
+        }
+
+        .icon-green {
+            background: linear-gradient(135deg, var(--color-medical-green), #66BB6A);
+            box-shadow: 0 8px 20px rgba(56, 142, 60, 0.3);
+        }
+
+        .icon-teal {
+            background: linear-gradient(135deg, var(--color-medical-teal), #4DB6AC);
+            box-shadow: 0 8px 20px rgba(38, 166, 154, 0.3);
+        }
+
+        .interactive-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--color-fg);
+        }
+
+        .interactive-card p {
+            color: var(--color-fg-muted);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        /* Enhanced Developer Section */
+        .developer-section {
+            background: rgba(22, 27, 34, 0.8);
+            border-radius: 24px;
+            padding: 4rem 3rem;
+            margin: 4rem 0;
+            border: 1px solid var(--color-border);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-info {
+            margin-bottom: 4rem;
+            text-align: center;
+        }
+
+        .project-info h3 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--color-medical-blue), var(--color-medical-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .project-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .project-detail-item {
+            background: rgba(13, 17, 23, 0.6);
+            padding: 2rem;
+            border-radius: 16px;
+            border-left: 4px solid var(--color-medical-blue);
+            transition: all 0.3s ease;
+        }
+
+        .project-detail-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-detail-item h4 {
+            color: var(--color-medical-teal);
+            margin-bottom: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        .developers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .developer-card {
+            background: rgba(13, 17, 23, 0.6);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            border: 1px solid var(--color-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .developer-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(88, 166, 255, 0.3);
+        }
+
+        .developer-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            border: 4px solid var(--color-medical-teal);
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--color-medical-blue), var(--color-medical-teal));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            box-shadow: 0 8px 20px rgba(38, 166, 154, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .developer-card:hover .developer-avatar {
+            transform: scale(1.05);
+            box-shadow: 0 12px 25px rgba(38, 166, 154, 0.4);
+        }
+
+        .developer-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .developer-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--color-fg);
+        }
+
+        .developer-role {
+            color: var(--color-medical-teal);
+            font-weight: 500;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .developer-it {
+            color: var(--color-fg-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            background: rgba(88, 166, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            display: inline-block;
+        }
+
+        .developer-function {
+            background: rgba(25, 118, 210, 0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            text-align: left;
+            border-left: 3px solid var(--color-medical-blue);
+        }
+
+        .function-title {
+            font-weight: 600;
+            color: var(--color-medical-blue);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .function-description {
+            font-size: 0.95rem;
+            color: var(--color-fg-muted);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 900px) {
+            .main-header {
+                padding: 1rem;
+            }
+
+            .main-nav {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--header-bg);
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+                border-top: 1px solid var(--color-border);
+            }
+
+            .main-nav.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-cta {
+                margin-left: 0;
+                text-align: center;
+            }
+
+            .hero {
+                padding-top: 6rem;
+            }
+
+            .developer-section {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .main-container {
+                padding: 0 1.5rem 4rem;
+            }
+            .main-header {
+                padding: 0.8rem 1rem;
+            }
+            .main-nav a {
+                margin: 0 0.5rem;
+            }
+            .stats-section {
+                margin: 3rem 0;
+                padding: 2rem 0;
+            }
+
+            .logo-text {
+                display: none;
+            }
+
+            .get-started-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="background-animation"></div>
+<div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+</div>
+
+<header class="main-header">
+    <a href="#home" class="header-logo">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <i class="bi bi-heart-pulse"></i>
+            </div>
+            <div class="logo-text">
+                <span class="logo-main">MediQ</span>
+                <span class="logo-tagline">HEALTHCARE SOLUTIONS</span>
+            </div>
+        </div>
+    </a>
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="bi bi-list"></i>
+    </button>
+
+
+</header>
+
+<div id="tsparticles"></div>
+
+<main class="main-container">
+    <section class="hero" id="home">
+        <h1 class="hero-title reveal">Advanced Care Management <span class="char" style="color: var(--color-medical-blue);">Simplified</span></h1>
+        <p class="hero-subtitle reveal">Streamline your healthcare operations with our comprehensive hospital management system. Manage appointments, patient records, billing, and more in one integrated platform.</p>
+        <div class="cta-buttons reveal">
+
+        </div>
+    </section>
+
+    <section class="section" id="features">
+        <h2 class="section-title reveal">Powerful Features</h2>
+        <p class="section-subtitle reveal">Our hospital management system comes with everything you need to streamline operations and improve patient care.</p>
+        <div class="features-grid">
+            <div class="interactive-card reveal">
+                <div class="feature-icon icon-blue">📅</div>
+                <h3>Appointment Management</h3>
+                <p>Schedule, reschedule, and manage patient appointments with our intuitive calendar system. Send automated reminders to reduce no-shows and optimize resource allocation.</p>
+            </div>
+            <div class="interactive-card reveal" style="transition-delay: 0.1s;">
+                <div class="feature-icon icon-green">📋</div>
+                <h3>Electronic Health Records</h3>
+                <p>Maintain comprehensive digital health records with secure access controls. Track patient history, medications, and treatment plans with advanced encryption.</p>
+            </div>
+            <div class="interactive-card reveal" style="transition-delay: 0.2s;">
+                <div class="feature-icon icon-teal">💰</div>
+                <h3>Billing & Insurance</h3>
+                <p>Streamline billing processes, insurance claims, and payment tracking. Generate invoices and manage financial records efficiently with automated reporting.</p>
+            </div>
+            <div class="interactive-card reveal">
+                <div class="feature-icon icon-blue">💊</div>
+                <h3>Pharmacy Management</h3>
+                <p>Manage drug inventory, prescriptions, and pharmacy operations. Track medication usage and automate reordering with intelligent stock management.</p>
+            </div>
+            <div class="interactive-card reveal" style="transition-delay: 0.1s;">
+                <div class="feature-icon icon-green">📊</div>
+                <h3>Analytics & Reporting</h3>
+                <p>Gain insights with comprehensive analytics and reporting tools. Monitor key performance indicators and make data-driven decisions with real-time dashboards.</p>
+            </div>
+            <div class="interactive-card reveal" style="transition-delay: 0.2s;">
+                <div class="feature-icon icon-teal">🔒</div>
+                <h3>Security & Compliance</h3>
+                <p>Ensure data security with role-based access controls, audit trails, and compliance with healthcare regulations like HIPAA and GDPR.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="developer-section" id="developers">
+        <div class="project-info reveal">
+            <h3>Project Details</h3>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem;">Software Engineering - SE2030 | Group ID: 2025-Y2-S1-MLB-B3G1-41</p>
+            <p style="font-size: 1.1rem;"><strong>Project Topic:</strong> Web-based Hospital Management System</p>
+
+            <div class="project-details">
+                <div class="project-detail-item">
+                    <h4>Course Information</h4>
+                    <p>Software Engineering - SE2030</p>
+                </div>
+                <div class="project-detail-item">
+                    <h4>Group Identification</h4>
+                    <p>2025-Y2-S1-MLB-B3G1-41</p>
+                </div>
+                <div class="project-detail-item">
+                    <h4>Project Scope</h4>
+                    <p>Web-based Hospital Management System</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title reveal">Development Team</h2>
+        <p class="section-subtitle reveal">Meet the talented developers behind MediQ Hospital Management System</p>
+
+        <div class="developers-grid">
+            <div class="developer-card reveal">
+                <div class="developer-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div class="developer-name">Weliweriya W.L.P.T</div>
+                <div class="developer-role">Scrum Master</div>
+                <div class="developer-it">IT24100072</div>
+                <div class="developer-function">
+                    <div class="function-title">Function 06: Report Generation & Analytics</div>
+                    <div class="function-description">
+                        This case provides analytics and performance reporting for the hospital. It generates appointments, revenue, staff activity, and patient inflow reports, offers visualizations with charts/graphs, and supports exporting reports in PDF/Excel.
+                    </div>
+                </div>
+            </div>
+
+            <div class="developer-card reveal" style="transition-delay: 0.1s;">
+                <div class="developer-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div class="developer-name">Suriyaarachchi R H</div>
+                <div class="developer-role">Developer</div>
+                <div class="developer-it">IT24100162</div>
+                <div class="developer-function">
+                    <div class="function-title">Function 02: Appointment Booking & Scheduling</div>
+                    <div class="function-description">
+                        This case ensures efficient appointment management for patients, doctors, and receptionists. It includes booking appointments, checking real-time doctor availability, sending confirmations and notifications, and handling rescheduling or cancellations.
+                    </div>
+                </div>
+            </div>
+
+            <div class="developer-card reveal" style="transition-delay: 0.2s;">
+                <div class="developer-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div class="developer-name">Thujeev K</div>
+                <div class="developer-role">Developer</div>
+                <div class="developer-it">IT24100213</div>
+                <div class="developer-function">
+                    <div class="function-title">Function 04: Billing & Invoicing</div>
+                    <div class="function-description">
+                        This case ensures accurate billing and invoicing for medical services and treatments. It automates bill calculation, generates invoices in PDF, tracks patient billing history, and integrates bills with patient profiles.
+                    </div>
+                </div>
+            </div>
+
+            <div class="developer-card reveal">
+                <div class="developer-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div class="developer-name">Dasanayaka D M H N A</div>
+                <div class="developer-role">Developer</div>
+                <div class="developer-it">IT24100201</div>
+                <div class="developer-function">
+                    <div class="function-title">Function 01: Patient Registration & Profile Management</div>
+                    <div class="function-description">
+                        This use case ensures that receptionists and administrators can register new patients, manage patient profiles, update patient information, search and filter patients, and maintain a timeline of patient history for future reference.
+                    </div>
+                </div>
+            </div>
+
+            <div class="developer-card reveal" style="transition-delay: 0.1s;">
+                <div class="developer-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div class="developer-name">Kularathne I M A G</div>
+                <div class="developer-role">Product Owner</div>
+                <div class="developer-it">IT24100092</div>
+                <div class="developer-function">
+                    <div class="function-title">Function 05: Role-Based Access & Staff Management</div>
+                    <div class="function-description">
+                        This use case ensures authentication, authorization, and staff management. It allows user account creation, role-based access configuration (Doctor, Nurse, Receptionist, Admin, Patient), permission enforcement, and account enable/disable management.
+                    </div>
+                </div>
+            </div>
+
+            <div class="developer-card reveal" style="transition-delay: 0.2s;">
+                <div class="developer-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div class="developer-name">Induwara K A A K</div>
+                <div class="developer-role">Developer</div>
+                <div class="developer-it">IT24100192</div>
+                <div class="developer-function">
+                    <div class="function-title">Function 03: Medical Records & Prescription Management</div>
+                    <div class="function-description">
+                        This use case allows doctors and authorized staff to view and update medical records, integrate lab results, track treatment history, issue digital prescriptions, and export/print medical records when necessary.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+<script>
+    (function() {
+        let revealObserver;
+        let particles = [];
+        const mouse = { x: null, y: null, radius: 150 };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            setupHeroTitleAnimation();
+            setupTsParticles();
+            setupInteractiveCardEffects();
+            setupRevealObserver();
+            setupHeaderScrollEffect();
+            setupMobileMenu();
+        });
+
+        function setupTsParticles() {
+            tsParticles.load("tsparticles", {
+                background: { color: "transparent" },
+                fpsLimit: 60,
+                particles: {
+                    number: { value: 40, density: { enable: true, area: 800 } },
+                    color: { value: ["#58a6ff", "#26A69A", "#66BB6A"] },
+                    shape: { type: "circle" },
+                    opacity: { value: { min: 0.1, max: 0.4 }, random: true },
+                    size: { value: { min: 1, max: 3 } },
+                    links: {
+                        enable: true,
+                        distance: 150,
+                        color: "#8b949e",
+                        opacity: 0.1,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 1,
+                        direction: "none",
+                        outModes: { default: "out" }
+                    }
+                },
+                interactivity: {
+                    events: {
+                        onHover: { enable: true, mode: "grab" },
+                        onClick: { enable: true, mode: "push" }
+                    },
+                    modes: {
+                        grab: { distance: 140, links: { opacity: 0.3 } },
+                        push: { quantity: 2 }
+                    }
+                },
+                detectRetina: true
+            });
+        }
+
+        function setupHeroTitleAnimation() {
+            const heroTitle = document.querySelector('.hero-title');
+            if (!heroTitle) return;
+
+            const text = heroTitle.textContent;
+            heroTitle.innerHTML = '';
+
+            text.split('').forEach((char, index) => {
+                const span = document.createElement('span');
+                span.className = 'char';
+                span.textContent = char === ' ' ? '\u00A0' : char;
+                span.style.animationDelay = `${index * 0.03}s`;
+                heroTitle.appendChild(span);
+            });
+        }
+
+        function setupInteractiveCardEffects() {
+            document.querySelectorAll('.interactive-card').forEach(attachInteractiveCardListeners);
+        }
+
+        function attachInteractiveCardListeners(card) {
+            if (!card || card.dataset.enhanced === 'true') {
+                return;
+            }
+
+            card.dataset.enhanced = 'true';
+            card.addEventListener('mousemove', event => {
+                const rect = card.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.setProperty('--mouse-x', '-1000px');
+                card.style.setProperty('--mouse-y', '-1000px');
+            });
+        }
+
+        function setupRevealObserver() {
+            revealObserver = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal').forEach(observeRevealElement);
+        }
+
+        function observeRevealElement(element) {
+            if (revealObserver && element) {
+                revealObserver.observe(element);
+            }
+        }
+
+        function setupHeaderScrollEffect() {
+            const header = document.querySelector('.main-header');
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        }
+
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mainNav = document.getElementById('mainNav');
+
+            if (mobileMenuBtn && mainNav) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mainNav.classList.toggle('active');
+                    mobileMenuBtn.innerHTML = mainNav.classList.contains('active')
+                        ? '<i class="bi bi-x-lg"></i>'
+                        : '<i class="bi bi-list"></i>';
+                });
+
+                // Close mobile menu when clicking on a link
+                mainNav.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mainNav.classList.remove('active');
+                        mobileMenuBtn.innerHTML = '<i class="bi bi-list"></i>';
+                    });
+                });
+            }
+        }
+
+        window.showRegisterModal = function() {
+            alert('Registration modal would open here. This is a demo.');
+        };
+    })();
+</script>
+</body>
+</html>

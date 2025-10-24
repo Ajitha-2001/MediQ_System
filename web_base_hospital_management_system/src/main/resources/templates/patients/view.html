@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:with="patientP=${patientP instanceof T(java.util.Optional) ? patientP.orElse(null) : patientP}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${(patientP != null ? (patientP.lastName + ', ' + patientP.firstName) : 'Patient Not Found') + ' • MediQ'}">
+    Patient Details • MediQ
+  </title>
+
+  <!-- Bootstrap 5 & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- AOS Animation -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <style>
+    :root{--primary-red:#dc2626;--light-red:#fef2f2;--dark-red:#991b1b;--accent-red:#ef4444;--white:#ffffff;--light-gray:#f8fafc;--medium-gray:#e2e8f0;--text-dark:#1e293b;--text-light:#64748b;--success:#10b981;--warning:#f59e0b;--info:#3b82f6;--shadow:0 4px 12px rgba(0,0,0,.08);--shadow-hover:0 8px 24px rgba(0,0,0,.12);--border-radius:16px;--transition:all .3s cubic-bezier(.4,0,.2,1)}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:linear-gradient(135deg,#fef2f2 0%,#ffffff 50%,#fef2f2 100%);min-height:100vh;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--text-dark);line-height:1.6;display:flex;flex-direction:column}
+
+    /* Header Animation */
+    .navbar {
+      position: relative;
+      overflow: hidden;
+    }
+    .navbar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+      animation: float 20s infinite linear;
+      z-index: 1;
+    }
+    @keyframes float{0%{transform:translateX(0) translateY(0)}100%{transform:translateX(-100px) translateY(-100px)}}
+    .navbar > .container{position:relative;z-index:2}
+    .navbar-brand{font-weight:700}
+    .nav-link{border-radius:8px;margin:0 2px;transition:var(--transition)}
+    .nav-link:hover{background:rgba(255,255,255,0.1)}
+
+    .main-content{flex:1;padding:3rem 1.5rem}
+    .container{max-width:1000px;margin:0 auto;width:100%}
+    .card{background:var(--white);border-radius:var(--border-radius);box-shadow:var(--shadow);padding:2.5rem;transition:var(--transition);border:1px solid var(--medium-gray);position:relative;overflow:hidden;margin-bottom:2rem}
+    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(135deg,var(--primary-red),var(--accent-red))}
+    .card:hover{transform:translateY(-5px);box-shadow:var(--shadow-hover)}
+    h2{color:var(--text-dark);font-weight:700;margin-bottom:1.5rem;font-size:1.75rem;display:flex;align-items:center;gap:.75rem}
+    h2::before{content:'';width:4px;height:24px;background:var(--primary-red);border-radius:2px}
+    h3{color:var(--text-dark);font-weight:600;margin:1.5rem 0 1rem;padding-bottom:.5rem;border-bottom:2px solid var(--light-red);display:flex;align-items:center;gap:.5rem}
+    h3 i{color:var(--primary-red)}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+    .gap{gap:1.5rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:1rem}.mt-4{margin-top:1.5rem}.ml-2{margin-left:.5rem}.flex{display:flex;align-items:center}
+    .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+    .card-header h2{margin-bottom:.5rem}
+    .muted{color:var(--text-light)}.small{font-size:.9rem}
+    .btn{background:linear-gradient(135deg,var(--primary-red),var(--accent-red));color:#fff;border:none;border-radius:10px;padding:.875rem 2rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;transition:var(--transition);cursor:pointer;font-size:1rem;position:relative;overflow:hidden}
+    .btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .5s}
+    .btn:hover::before{left:100%}.btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(220,38,38,.3)}
+    .btn.secondary{background:transparent;color:var(--text-light);border:2px solid var(--medium-gray)}
+    .btn.secondary:hover{background:var(--medium-gray);color:var(--text-dark);border-color:var(--text-light)}
+    .badge{display:inline-block;padding:.25rem .75rem;background:var(--light-red);color:var(--primary-red);border-radius:50px;font-size:.8rem;font-weight:600;border:1px solid var(--primary-red)}
+    .table-responsive{overflow-x:auto}
+    .table{width:100%;border-collapse:collapse;margin-top:1rem}
+    .table th{background:var(--light-red);color:var(--primary-red);font-weight:600;padding:1rem;text-align:left;border-bottom:2px solid var(--primary-red)}
+    .table td{padding:1rem;border-bottom:1px solid var(--medium-gray)}
+    .table tr:hover{background:var(--light-gray)}
+    .info-card{background:var(--light-gray);border-radius:10px;padding:1.5rem;margin-bottom:1rem;border-left:4px solid var(--primary-red)}
+    .info-card p{margin-bottom:.5rem}.info-card strong{color:var(--text-dark)}
+    .error-card{background:var(--light-red);border-left:4px solid var(--primary-red)}
+    .error-icon{font-size:3rem;color:var(--primary-red);margin-bottom:1rem}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    .animate-fade-in-up{animation:fadeInUp .6s ease-out}
+    @media (max-width:768px){.container{padding:1rem}.card{padding:1.5rem}.grid-2{grid-template-columns:1fr}.flex{flex-direction:column;gap:1rem;width:100%}.btn{width:100%;justify-content:center}.ml-2{margin-left:0}.card-header{flex-direction:column;align-items:flex-start}.card-header .flex{width:100%}}
+
+    /* ---- Fallback so page isn't blank if AOS JS is blocked/offline ---- */
+    [data-aos] { opacity: 1 !important; transform: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, var(--primary-red), var(--dark-red));">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/index}">
+      <i class="bi bi-hospital-fill"></i>
+      <span>MediQ</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="topNav" class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" th:href="@{/admin/dashboard}">Admin Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link active" th:href="@{/patients}">Patient Management</a></li>
+      </ul>
+
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-white-50 small">
+          <i class="bi bi-person-circle me-1"></i>
+          <span th:text="${#authentication?.name} ?: 'Guest'">Guest</span>
+        </span>
+
+        <!-- Logout must be POST -->
+        <form th:if="${#authentication != null and #authentication.principal != null and #authentication.principal != 'anonymousUser'}"
+              th:action="@{/logout}" method="post" class="m-0">
+          <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+          <button class="btn btn-outline-light btn-sm" type="submit">
+            <i class="bi bi-box-arrow-right me-1"></i> Logout
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Breadcrumb -->
+<nav class="container mt-3" aria-label="breadcrumb" data-aos="fade-down">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" class="text-decoration-none">Admin Dashboard</a></li>
+    <li class="breadcrumb-item"><a th:href="@{/patients}" class="text-decoration-none">Patient Management</a></li>
+    <li class="breadcrumb-item active" aria-current="page" th:text="${patientP != null ? (patientP.lastName + ', ' + patientP.firstName) : 'Patient Details'}">Patient Details</li>
+  </ol>
+</nav>
+
+<main class="main-content">
+  <div class="container">
+    <!-- Error Handling -->
+    <div th:if="${patientP == null}" class="card error-card animate-fade-in-up">
+      <div style="text-align:center;padding:2rem;">
+        <i class="bi bi-exclamation-triangle error-icon"></i>
+        <h2>Patient Not Found</h2>
+        <p class="muted">The patient you are looking for does not exist or the ID is invalid.</p>
+        <div class="mt-4 flex" style="justify-content:center;">
+          <a class="btn secondary" th:href="@{/patients}">
+            <i class="bi bi-arrow-left"></i>
+            Back to Patients
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Patient Information Card -->
+    <div th:if="${patientP != null}" class="card animate-fade-in-up">
+      <div class="card-header">
+        <div>
+          <h2 data-aos="fade-right">
+            <i class="bi bi-person-circle"></i>
+            <span th:text="${patientP.lastName + ', ' + patientP.firstName}">Doe, Jane</span>
+          </h2>
+          <p class="muted small" data-aos="fade-right" data-aos-delay="100">
+            <strong>Gender:</strong> <span th:text="${patientP.gender}">female</span> •
+            <strong>DOB:</strong> <span th:text="${patientP.dateOfBirth}">1990-01-01</span>
+          </p>
+        </div>
+        <div class="flex" data-aos="fade-left">
+          <a class="btn" th:href="@{|/patients/${patientP.externalId}/edit|}">
+            <i class="bi bi-pencil-square"></i>
+            Edit Profile
+          </a>
+          <a class="btn secondary ml-2" th:href="@{/patients}">
+            <i class="bi bi-arrow-left"></i>
+            Back
+          </a>
+        </div>
+      </div>
+
+      <!-- Contact Information -->
+      <h3 data-aos="fade-up" data-aos-delay="200">
+        <i class="bi bi-telephone"></i>
+        Contact Information
+      </h3>
+      <div class="grid-2 gap">
+        <div class="info-card" data-aos="fade-right" data-aos-delay="300">
+          <h4>Phone & Email</h4>
+          <p>
+            <strong>Phone:</strong>
+            <span th:text="${patientP.contact?.phone ?: 'Not provided'}">+94 ...</span>
+          </p>
+          <p>
+            <strong>Email:</strong>
+            <span th:if="${patientP.contact?.email}">
+              <a th:href="${'mailto:' + patientP.contact.email}" th:text="${patientP.contact.email}">mail@example.com</a>
+            </span>
+            <span th:unless="${patientP.contact?.email}">Not provided</span>
+          </p>
+        </div>
+        <div class="info-card" data-aos="fade-left" data-aos-delay="300">
+          <h4>Address</h4>
+          <p>
+            <span th:text="${patientP.contact?.addressLine1 ?: 'Not provided'}">Line 1</span><br/>
+            <span th:text="${patientP.contact?.addressLine2}">Line 2</span>
+            <span th:if="${patientP.contact?.addressLine2}"><br/></span>
+            <span th:text="${patientP.contact?.city ?: ''}">City</span>
+            <span th:if="${patientP.contact?.city and patientP.contact?.state}">, </span>
+            <span th:text="${patientP.contact?.state ?: ''}">State</span>
+            <span th:if="${patientP.contact?.postalCode}"> </span>
+            <span th:text="${patientP.contact?.postalCode ?: ''}">12345</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Medical Information -->
+      <h3 data-aos="fade-up" data-aos-delay="400">
+        <i class="bi bi-heart-pulse"></i>
+        Medical Information
+      </h3>
+      <div class="info-card" data-aos="fade-up" data-aos-delay="500">
+        <p>
+          <strong>Blood Type:</strong>
+          <span th:if="${patientP.medical?.bloodType}" class="badge" th:text="${patientP.medical.bloodType}">O+</span>
+          <span th:unless="${patientP.medical?.bloodType}" class="muted">Not specified</span>
+        </p>
+        <p>
+          <strong>Allergies:</strong>
+          <span th:text="${patientP.medical?.allergies ?: 'None recorded'}">None</span>
+        </p>
+        <p>
+          <strong>Chronic Conditions:</strong>
+          <span th:text="${patientP.medical?.chronicConditions ?: 'None recorded'}">—</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Timeline Card -->
+    <div th:if="${patientP != null}" class="card animate-fade-in-up" data-aos="fade-up" data-aos-delay="600">
+      <h3>
+        <i class="bi bi-clock-history"></i>
+        Patient Timeline
+      </h3>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>When</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="e, eStat : ${timeline}" data-aos="fade-up" th:attr="data-aos-delay=${eStat.count * 100}">
+            <td th:text="${#temporals.format(e.eventTime, 'yyyy-MM-dd HH:mm')}">2025-09-28 09:00</td>
+            <td><span th:text="${e.type}" class="badge">Visit</span></td>
+            <td th:text="${e.description}">Routine checkup</td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(timeline)}" data-aos="fade-up">
+            <td colspan="3" class="muted" style="text-align:center;">No timeline events recorded for this patient</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="mt-5">
+  <div class="container py-4 text-center text-muted small">
+    © <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2025</span> MediQ
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init({ duration: 800, once: true, offset: 50 });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const m = window.location.pathname.match(/\/patients\/([a-fA-F0-9-]+)/);
+    if (m && m[1].length !== 36) {
+      console.warn('Patient ID is not a 36-char UUID:', m[1]);
+    }
+  });
+</script>
+</body>
+</html>

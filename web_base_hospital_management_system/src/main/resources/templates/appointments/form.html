@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book Appointment • MediQ</title>
+
+  <!-- Bootstrap 5 & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-orange: #FF6B35;
+      --light-orange: #FFF5F0;
+      --dark-orange: #E55A2B;
+      --accent-orange: #FF8C5A;
+      --white: #ffffff;
+      --light-gray: #f8fafc;
+      --medium-gray: #e2e8f0;
+      --text-dark: #1e293b;
+      --text-light: #64748b;
+      --success: #10b981;
+      --error: #ef4444;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+      --border-radius: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #FFF9F5 0%, #FFF5F0 50%, #FFF0E8 100%);
+      min-height: 100vh;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-dark);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header Animation */
+    .navbar {
+      position: relative;
+      overflow: hidden;
+    }
+    .navbar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+      animation: float 20s infinite linear;
+      z-index: 1;
+    }
+    @keyframes float {
+      0% { transform: translateX(0) translateY(0); }
+      100% { transform: translateX(-100px) translateY(-100px); }
+    }
+    .navbar > .container { position: relative; z-index: 2; }
+    .navbar-brand { font-weight: 700; }
+    .nav-link { border-radius: 8px; margin: 0 2px; transition: var(--transition); }
+    .nav-link:hover { background: rgba(255, 255, 255, 0.1); }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 2rem 1.5rem;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-title::before {
+      content: '';
+      width: 4px;
+      height: 28px;
+      background: var(--primary-orange);
+      border-radius: 2px;
+    }
+
+    .page-subtitle {
+      color: var(--text-light);
+      font-size: 1.1rem;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 2.5rem;
+      transition: var(--transition);
+      border: 1px solid var(--medium-gray);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(135deg, var(--primary-orange), var(--accent-orange));
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-label i {
+      color: var(--primary-orange);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid var(--medium-gray);
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: var(--transition);
+      background: var(--white);
+      font-family: inherit;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-orange);
+      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+      transform: translateY(-1px);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 16px;
+    }
+
+    .channel-options {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .channel-option {
+      flex: 1;
+    }
+
+    .channel-option input {
+      display: none;
+    }
+
+    .channel-option label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      border: 2px solid var(--medium-gray);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .channel-option input:checked + label {
+      border-color: var(--primary-orange);
+      background: rgba(255, 107, 53, 0.05);
+      color: var(--primary-orange);
+    }
+
+    .channel-option label:hover {
+      border-color: var(--primary-orange);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn-flex {
+      flex: 1;
+    }
+
+    .error-message {
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .error-message p {
+      color: var(--error);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 107, 53, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary-orange);
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Buttons */
+    .btn {
+      background: linear-gradient(135deg, var(--primary-orange), var(--accent-orange));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+      cursor: pointer;
+      font-size: 0.95rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+    }
+
+    .btn.secondary {
+      background: transparent;
+      color: var(--text-light);
+      border: 2px solid var(--medium-gray);
+    }
+
+    .btn.secondary:hover {
+      background: var(--medium-gray);
+      color: var(--text-dark);
+      border-color: var(--text-light);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-in-up {
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full-width {
+        grid-column: span 1;
+      }
+
+      .channel-options {
+        flex-direction: column;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/index}">
+      <i class="bi bi-hospital-fill"></i>
+      <span>MediQ</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="topNav" class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" th:href="@{/admin/dashboard}">Admin Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/patients}">Patient Management</a></li>
+        <li class="nav-item"><a class="nav-link active" th:href="@{/appointments}">Appointments</a></li>
+      </ul>
+
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-white-50 small">
+          <i class="bi bi-person-circle me-1"></i>
+          <span th:text="${#authentication?.name} ?: 'Guest'">Guest</span>
+        </span>
+
+        <!-- Logout must be POST -->
+        <form th:if="${#authentication != null and #authentication.principal != null and #authentication.principal != 'anonymousUser'}"
+              th:action="@{/logout}" method="post" class="m-0">
+          <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+          <button class="btn btn-outline-light btn-sm" type="submit">
+            <i class="bi bi-box-arrow-right me-1"></i> Logout
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Breadcrumb -->
+<nav class="container mt-3" aria-label="breadcrumb" data-aos="fade-down">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" class="text-decoration-none">Admin Dashboard</a></li>
+    <li class="breadcrumb-item"><a th:href="@{/appointments}" class="text-decoration-none">Appointments</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Book Appointment</li>
+  </ol>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content">
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header" data-aos="fade-up">
+      <h1 class="page-title">
+        <i class="bi bi-calendar-plus"></i>
+        Book Appointment
+      </h1>
+      <p class="page-subtitle">Schedule a new appointment with our healthcare professionals</p>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="card animate-fade-in-up">
+      <form th:action="@{/appointments}" th:object="${form}" method="post" id="appointmentForm">
+        <div class="form-grid">
+          <!-- Patient Selection -->
+          <div class="form-group" data-aos="fade-right" data-aos-delay="100">
+            <label class="form-label">
+              <i class="bi bi-person"></i>
+              Patient
+            </label>
+            <select class="form-control" th:field="*{patientId}" required>
+              <option value="" disabled selected>Select patient</option>
+              <option th:each="p: ${patients}" th:value="${p.id}" th:text="${p.firstName} + ' ' + ${p.lastName}"></option>
+            </select>
+          </div>
+
+          <!-- Doctor Selection -->
+          <div class="form-group" data-aos="fade-left" data-aos-delay="100">
+            <label class="form-label">
+              <i class="bi bi-person-badge"></i>
+              Doctor
+            </label>
+            <select class="form-control" id="doctor" th:field="*{doctorId}" onchange="refreshSlots()" required>
+              <option value="" disabled selected>Select doctor</option>
+              <option th:each="d: ${doctors}" th:value="${d.id}" th:text="${d.name} + ' · ' + ${d.specialization}"></option>
+            </select>
+          </div>
+
+          <!-- Date Selection -->
+          <div class="form-group" data-aos="fade-right" data-aos-delay="200">
+            <label class="form-label">
+              <i class="bi bi-calendar"></i>
+              Date
+            </label>
+            <input type="date" class="form-control" id="date" th:field="*{date}" onchange="refreshSlots()" required>
+          </div>
+
+          <!-- Time Selection -->
+          <div class="form-group" data-aos="fade-left" data-aos-delay="200">
+            <label class="form-label">
+              <i class="bi bi-clock"></i>
+              Available Time
+            </label>
+            <select class="form-control" id="time" th:field="*{time}" required>
+              <option th:each="s: ${slots}" th:value="${s}" th:text="${s}"></option>
+            </select>
+          </div>
+
+          <!-- Channel Selection -->
+          <div class="form-group full-width" data-aos="fade-up" data-aos-delay="300">
+            <label class="form-label">
+              <i class="bi bi-broadcast"></i>
+              Appointment Channel
+            </label>
+            <div class="channel-options">
+              <div class="channel-option">
+                <input type="radio" id="in_person" name="channel" value="IN_PERSON" th:field="*{channel}">
+                <label for="in_person">
+                  <i class="bi bi-person-check"></i>
+                  In Person
+                </label>
+              </div>
+              <div class="channel-option">
+                <input type="radio" id="online" name="channel" value="ONLINE" th:field="*{channel}">
+                <label for="online">
+                  <i class="bi bi-camera-video"></i>
+                  Online
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group full-width" data-aos="fade-up" data-aos-delay="400">
+            <label class="form-label">
+              <i class="bi bi-sticky"></i>
+              Notes (optional)
+            </label>
+            <textarea class="form-control" th:field="*{notes}" rows="4" placeholder="Any additional information about the appointment..."></textarea>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions" data-aos="fade-up" data-aos-delay="500">
+          <button class="btn btn-flex" type="submit" id="submitBtn">
+            <i class="bi bi-calendar-check"></i>
+            Book Appointment
+          </button>
+          <a href="/appointments" class="btn secondary btn-flex">
+            <i class="bi bi-arrow-left"></i>
+            Cancel
+          </a>
+        </div>
+
+        <!-- Error Messages -->
+        <div class="error-message" th:if="${#fields.hasErrors('*')}">
+          <p>
+            <i class="bi bi-exclamation-circle"></i>
+            <span th:each="e : ${#fields.detailedErrors('*')}" th:text="${e.message}">Error</span>
+          </p>
+        </div>
+        <div class="error-message" th:if="${error}">
+          <p>
+            <i class="bi bi-exclamation-circle"></i>
+            <span th:text="${error}"></span>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="mt-5">
+  <div class="container py-4 text-center text-muted small">
+    © <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2025</span> MediQ
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  // Initialize AOS animations
+  AOS.init({
+    duration: 800,
+    once: true,
+    offset: 50
+  });
+
+  // Set minimum date to today
+  document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('date').setAttribute('min', today);
+  });
+
+  async function refreshSlots() {
+    const doctorId = document.getElementById('doctor').value;
+    const date = document.getElementById('date').value;
+    const timeSelect = document.getElementById('time');
+
+    if (!doctorId || !date) return;
+
+    // Show loading state
+    timeSelect.innerHTML = '<option>Loading available slots <span class="loading"></span></option>';
+    timeSelect.disabled = true;
+
+    try {
+      const res = await fetch(`/appointments/slots?doctorId=${doctorId}&date=${date}`);
+      const slots = await res.json();
+
+      timeSelect.innerHTML = '';
+      timeSelect.disabled = false;
+
+      if (!slots.length) {
+        timeSelect.innerHTML = '<option disabled>No slots available for this date</option>';
+        return;
+      }
+
+      for (const s of slots) {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = s;
+        timeSelect.appendChild(opt);
+      }
+
+    } catch (error) {
+      timeSelect.innerHTML = '<option disabled>Error loading available slots</option>';
+      timeSelect.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
